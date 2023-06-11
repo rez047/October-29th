@@ -24,7 +24,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.humanize',
-    'school_management_app.apps.SchoolManagementAppConfig',
+    'school_management_app',
     
 ]
 
