@@ -1,0 +1,67 @@
+{% extends 'hod_template/base_template.html' %}
+
+{% block page_title %}
+<i class="nav-icon fas fa-book-open"></i> ADD SUBJECT <a href="/manage_subject" class="btn btn-success">SUBJECT LIST</a>
+{% endblock page_title %}
+
+{% block main_content %}
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card card-primary">
+          <div class="card-header">
+            <h3 class="card-title">Add Subject</h3>
+          </div>
+          <form role="form" action="/finance_create" method="post">
+            {% csrf_token %}
+            <div class="card-body">
+              <div class="form-group">
+                <label>Student:</label>
+                <select class="form-control" name="student">
+                  {% for student_id, student_name in student_names.items %}
+                  <option value="{{ student_id }}">{{ student_name }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="fees_type">Fees Type:</label>
+                <select id="fees_type" name="fees_type" required>
+                  <option value="" selected disabled>Select Fees Type</option>
+                  <option value="lunch">Lunch</option>
+                  <option value="transport">Transport</option>
+                  <option value="tuition">Tuition</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="fee_due">Fee Due:</label>
+                <input type="number" step="0.01" id="fee_due" name="fee_due" required>
+              </div>
+              <div class="form-group">
+                <label for="fees_paid">Fees Paid:</label>
+                <input type="number" step="0.01" id="fees_paid" name="fees_paid" required>
+              </div>
+              <input type="submit" value="Create Finance Record" class="btn btn-primary">
+            </div>
+          </form>
+          <div class="card-footer">
+            <div class="form-group">
+              {% if messages %}
+              {% for message in messages %}
+              {% if message.tags == 'error' %}
+              <div class="alert alert-danger" style="margin-top:10px">{{ message }}</div>
+              {% endif %}
+              {% if message.tags == 'success' %}
+              <div class="alert alert-success" style="margin-top:10px">{{ message }}</div>
+              {% endif %}
+              {% endfor %}
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock main_content %}
+

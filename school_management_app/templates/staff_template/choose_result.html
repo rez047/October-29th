@@ -1,0 +1,36 @@
+{% extends 'staff_template/base_template.html' %}
+{% block page_title %}
+<i class="nav-icon fas fa-graduation-cap"></i> 
+{% endblock page_title %}
+{% block main_content %}
+
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-12">
+        <h3>Choose the Result to Update:</h3>
+        <form action="{% url 'update_selected_result' %}" method="post">
+          {% csrf_token %}
+          {% for result in results %}
+          <div class="card card-primary">
+            <div class="card-body">
+              <h5>Result ID: {{ result.id }}</h5>
+              <p>Assignment Marks: {{ result.subject_assignment_marks }}</p>
+              <p>Exam Marks: {{ result.subject_exam_marks }}</p>
+              <input type="hidden" name="result_id" value="{{ result.id }}">
+              <input type="hidden" name="assignment_marks" value="{{ assignment_marks }}">
+              <input type="hidden" name="exam_marks" value="{{ exam_marks }}">
+            </div>
+            <div class="card-footer">
+              <button type="submit" class="btn btn-primary btn-block shadow-custom">Update Result</button>
+            </div>
+          </div>
+          {% endfor %}
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% endblock main_content %}
+

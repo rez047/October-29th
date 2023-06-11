@@ -1,0 +1,109 @@
+{% extends 'account_template/base_template.html' %}
+{% load static %}
+
+{% block page_title %}
+<i class="nav-icon fas fa-file-invoice-dollar"></i> ADD FINANCIAL RECORD <a href="/account_add_financial_record" class="btn btn-success">ADD FINANCIAL RECORD</a>
+{% block custom_css %}
+<link rel="stylesheet" href="{% static "plugins/datatables-bs4/css/dataTables.bootstrap4.min.css" %}">
+<link rel="stylesheet" href="{% static "plugins/datatables-responsive/css/responsive.bootstrap4.min.css" %}">
+<link rel="stylesheet" href="{% static "plugins/datatables-buttons/css/buttons.bootstrap4.min.css" %}">
+{% endblock custom_css %}
+{% endblock page_title %}
+
+{% block main_content %}
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card card-primary">
+          <div class="card-header">
+            <h3 class="card-title">Financial Record List</h3>
+          </div>
+          <div class="card-body">
+            <div class="table-responsive">
+              <table id="financial_records_table" class="table">
+                <thead>
+                  <tr>
+                    <th>Student Name</th>
+                    <th>Date</th>
+                    <th>Fee Type</th>
+                    <th>Fee Balance</th>
+                    <th>Amount Paid</th>
+                    <th>New Balance</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for record in financial_records %}
+                  <tr>
+                    <td>{{ record.student.admin.first_name }} {{ record.student.admin.last_name }}</td>
+                    <td>{{ record.date }}</td>
+                    <td>{{ record.fee_type }}</td>
+                    <td>{{ record.fee_balance }}</td>
+                    <td>{{ record.amount_paid }}</td>
+                    <td>{{ record.new_balance }}</td>
+                    <td>  <!-- Added a new column for Actions -->
+                      <a href="{% url 'account_generate_receipt_pdf' record.student.id %}">
+                        Generate single
+                      </a>
+                      <a href="{% url 'account_generate_receipt_pdfs' record.student.id %}">
+                        Generate All 
+                      </a>
+                    </td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% block custom_js %}
+<!-- Include required JavaScript libraries -->
+
+<!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- DataTables -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.11.3/css/jquery.dataTables.min.css">
+<script src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.min.js"></script>
+
+<!-- DataTables Responsive -->
+<link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.2.9/css/responsive.dataTables.min.css">
+<script src="https://cdn.datatables.net/responsive/2.2.9/js/dataTables.responsive.min.js"></script>
+
+<!-- DataTables Buttons -->
+<link rel="stylesheet" href="https://cdn.datatables.net/buttons/1.7.1/css/buttons.dataTables.min.css">
+<script src="https://cdn.datatables.net/buttons/1.7.1/js/dataTables.buttons.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/1.7.1/js/buttons.html5.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/1.7.1/js/buttons.print.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/1.7.1/js/buttons.colVis.min.js"></script>
+
+<script>
+  $(document).ready(function() {
+    if ($.fn.DataTable.isDataTable('#financial_records_table')) {
+      $('#financial_records_table').DataTable().destroy();
+    }
+    
+    $('#financial_records_table').DataTable({
+      dom: 'Bfrtip',
+      buttons: [
+        {
+          extend: 'copy',
+          className: 'dt-button',
+          text: '<i class="fas fa-copy"></i> Copy',
+          exportOptions: {
+            columns: [0, 1, 2, 3, 4, 5]
+          }
+        },
+        'csv', 'excel', 'pdf', 'print', 'colvis'
+      ]
+    });
+  });
+</script>
+{% endblock custom_js %}
+{% endblock main_content %}
+

@@ -1,0 +1,151 @@
+{% extends 'staff_template/base_template.html' %}
+{% load static %}
+{% block page_title %}
+<i class="nav-icon fas fa-sign-out-alt"></i> Apply Leave
+{% endblock page_title %}
+{% block custom_css %}
+<link rel="stylesheet" href="{% static "plugins/datatables-bs4/css/dataTables.bootstrap4.min.css" %}">
+<link rel="stylesheet" href="{% static "plugins/datatables-responsive/css/responsive.bootstrap4.min.css" %}">
+<link rel="stylesheet" href="{% static "plugins/datatables-buttons/css/buttons.bootstrap4.min.css" %}">
+<style>
+  .show-read-more .more-text{
+      display: none;
+  }
+</style>
+{% endblock custom_css %}
+{% block main_content %}
+
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card card-primary">
+          <div class="card-header">
+            <h3 class="card-title">Apply Leave</h3>
+          </div>
+          <form action="{% url 'staff_apply_leave_save' %}" method="post">
+            {% csrf_token %}
+            <div class="card-body">
+              <div class="form-group">
+                <label>Leave Start Date:</label>
+                <input type="date" name="leave_start_date" class="form-control" placeholder="Leave Date" required>
+              </div>
+              <div class="form-group">
+                <label>Leave End Date:</label>
+                <input type="date" name="leave_end_date" class="form-control" placeholder="Leave Date" required>
+              </div>
+              <div class="form-group">
+                <label>Leave Request Message</label>
+                <textarea class="form-control" rows="6" name="leave_msg" required></textarea>
+              </div>
+              <div class="form-group">
+                {% if messages %}
+                {% for message in messages %}
+                {% if message.tags == 'error' %}
+                <div class="alert alert-danger" style="margin-top:10px">{{ message }}</div>
+                {% endif %}
+                {% if message.tags == 'success' %}
+                <div class="alert alert-success" style="margin-top:10px">{{ message }}</div>
+                {% endif %}
+                {% endfor %}
+                {% endif %}
+              </div>
+            </div>
+            <div class="card-footer">
+              <button type="submit" class="btn btn-primary btn-block shadow-custom" id="fetch_student">Submit</button>
+            </div>
+          </form>
+        </div>
+        <div class="card card-primary">
+          <div class="card-header">
+            <h3 class="card-title">Leave History</h3>
+          </div>
+          {% if leave_data %}
+          <div class="card-body">
+            <table id="example1" class="table table-striped">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Date Sent</th>
+                  <th>Leave Start Date</th>
+                  <th>Leave End Date</th>
+                  <th>Leave Request Message</th>
+                  <th>Response</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for row in leave_data %}
+                <tr>
+                  <td style="width:50px;">{{ row.id }}</td>
+                  <td style="width:230px;">{{ row.created_at }}</td>
+                  <td style="width:130px;">{{ row.leave_start_date }}</td>
+                  <td style="width:130px;">{{ row.leave_end_date }}</td>
+                  <td class="show-read-more">{{ row.leave_message }}</td>
+                  <td style="width:210px; vertical-align: middle;">
+                    {% if row.leave_status == 1 %}
+                    <span class="alert alert-success shadow-custom">Approved</span>
+                    {% elif row.leave_status == 2 %}
+                    <span class="alert alert-danger shadow-custom">Disapproved</span>
+                    {% else %}
+                    <span class="alert alert-info shadow-custom">Pending</span>
+                    {% endif %}
+                  </td>
+                </tr>
+              {% endfor %}
+              </tbody>
+            </table>
+          </div>
+          {% else %}  
+          <div class="card-body">
+            <h4>No records of Leave.</h4>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% block custom_js %}
+<!-- DataTables  & Plugins -->
+<script src="{% static "plugins/datatables/jquery.dataTables.min.js" %}"></script>
+<script src="{% static "plugins/datatables-bs4/js/dataTables.bootstrap4.min.js" %}"></script>
+<script src="{% static "plugins/datatables-responsive/js/dataTables.responsive.min.js" %}"></script>
+<script src="{% static "plugins/datatables-responsive/js/responsive.bootstrap4.min.js" %}"></script>
+<script src="{% static "plugins/datatables-buttons/js/dataTables.buttons.min.js" %}"></script>
+<script src="{% static "plugins/datatables-buttons/js/buttons.bootstrap4.min.js" %}"></script>
+<script src="{% static "plugins/jszip/jszip.min.js" %}"></script>
+<script src="{% static "plugins/pdfmake/pdfmake.min.js" %}"></script>
+<script src="{% static "plugins/pdfmake/vfs_fonts.js" %}"></script>
+<script src="{% static "plugins/datatables-buttons/js/buttons.html5.min.js" %}"></script>
+<script src="{% static "plugins/datatables-buttons/js/buttons.print.min.js" %}"></script>
+<script src="{% static "plugins/datatables-buttons/js/buttons.colVis.min.js" %}"></script>
+<script>
+  $(function () {
+    $("#example1").DataTable({
+      "responsive": true, "lengthChange": false, "autoWidth": false,
+      "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"],
+    }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+  });
+</script>
+<script>
+  $(document).ready(function(){
+      var maxLength = 150;
+      $(".show-read-more").each(function(){
+          var myStr = $(this).text();
+          if($.trim(myStr).length > maxLength){
+              var newStr = myStr.substring(0, maxLength);
+              var removedStr = myStr.substring(maxLength, $.trim(myStr).length);
+              $(this).empty().html(newStr);
+              $(this).append(' <a href="javascript:void(0);" class="read-more">(цааш унших...)</a>');
+              $(this).append('<span class="more-text">' + removedStr + '</span>');
+          }
+      });
+      $(".read-more").click(function(){
+          $(this).siblings(".more-text").contents().unwrap();
+          $(this).remove();
+      });
+  });
+</script>
+{% endblock custom_js %}
+
+{% endblock main_content %}

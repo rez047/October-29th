@@ -1,0 +1,73 @@
+{% extends 'parent_template/base_template.html' %}
+{% block custom_css %}
+<style>
+  .attendance_div_red {
+    padding: 10px;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    background: #ff4141;
+    text-align: center;
+    color: #fff;
+    border-radius: 15px;
+    box-shadow: rgba(0, 0, 0, 0.3) 0px 19px 38px, rgba(0, 0, 0, 0.22) 0px 15px 12px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+  }
+
+  .attendance_div_green {
+    padding: 10px;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    background: #009c56;
+    text-align: center;
+    color: #fff;
+    border-radius: 15px;
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 19px 38px, rgba(0, 0, 0, 0.22) 0px 15px 12px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+  }
+</style>
+{% endblock custom_css %}
+{% block page_title %}
+<i class="nav-icon fas fa-user-check"></i> Personal Information
+<a href="/parent_view_attendance" class="btn btn-success shadow-custom"><i class="nav-icon fas fa-chevron-left"></i> BACK</a>
+{% endblock page_title %}
+{% block main_content %}
+
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card card-primary">
+          <div class="card-header">
+            <h3 class="card-title">Personal Data</h3>
+          </div>
+          <div class="card-body">
+            <div class="row justify-content-center">
+              {% if attendance_reports %}
+              {% for attendance_report in attendance_reports %}
+              {% if attendance_report.status == True %}
+              <div class="col-lg-2 ml-2 mr-2 attendance_div_green">
+                <b>Day: {{ attendance_report.attendance_id.attendance_date }}</b>
+                <br>
+                <b>[ Present ]</b>
+              </div>
+              {% else %}
+              <div class="col-lg-2 ml-2 mr-2 attendance_div_red">
+                <b>Date : {{ attendance_report.attendance_id.attendance_date }}</b>
+                <br>
+                <b>[ Absent ]</b>
+              </div>
+              {% endif %}
+              {% endfor %}
+              {% else %}
+              <div class="alert alert-danger text-center shadow-custom">Submit</div>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+</section>
+
+{% endblock main_content %}

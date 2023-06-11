@@ -1,0 +1,221 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Receipt</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #F4F4F4;
+        padding: 20px;
+      }
+
+      .container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #FFF;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      }
+
+      header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding-bottom: 20px;
+        border-bottom: 1px solid #DDD;
+      }
+
+      #logo {
+        display: flex;
+        align-items: center;
+      }
+
+      #logo img {
+        width: 100px;
+        height: auto;
+      }
+
+      #company {
+        margin-left: 20px;
+        text-align: right;
+      }
+
+      #company h1 {
+        font-size: 24px;
+        color: #333;
+        margin: 0;
+      }
+
+      #company div {
+        color: #777;
+      }
+
+      main {
+        padding: 20px 0;
+      }
+
+      #details {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 20px;
+      }
+
+      #client {
+        flex-basis: 60%;
+      }
+
+      #invoice {
+        text-align: right;
+        flex-basis: 35%;
+      }
+
+      .name {
+        font-size: 18px;
+        color: #333;
+        margin: 0;
+      }
+
+      .address, .email {
+        margin-top: 5px;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 20px;
+      }
+
+      table th, table td {
+        border: 1px solid #DDD;
+        padding: 10px;
+        text-align: left;
+      }
+
+      table th {
+        background-color: #EEE;
+      }
+
+      .total {
+        font-weight: bold;
+      }
+
+      #thanks {
+        margin-top: 20px;
+        font-size: 16px;
+        color: #333;
+      }
+
+      #notices {
+        padding-left: 6px;
+        border-left: 6px solid #333;
+      }
+
+      #notices div {
+        margin-bottom: 10px;
+      }
+
+      .notice {
+        font-size: 14px;
+      }
+
+      footer {
+        margin-top: 20px;
+        text-align: center;
+        font-size: 12px;
+        color: #777;
+      }
+
+      @media print {
+        body {
+          padding: 0;
+        }
+
+        .container {
+          box-shadow: none;
+          border: none;
+          padding: 0;
+          margin: 0 auto;
+          width: 100%;
+        }
+
+        header,
+        footer {
+          display: none;
+        }
+
+        main {
+          padding: 0;
+        }
+
+        table th,
+        table td {
+          border: 1px solid #DDD !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    {% for record in records %}
+    <div class="container">
+      <header>
+        <div id="logo">
+          <img src="{% static 'dist/img/founder.png' %}" alt="Logo">
+        </div>
+
+        <div id="company">
+          <h1>{{ company.name }}</h1>
+          <div>{{ company.address }}</div>
+          <div>{{ company.phone }}</div>
+          <div><a href="mailto:{{ company.email }}">{{ company.email }}</a></div>
+        </div>
+      </header>
+      <main>
+        <div id="details">
+          <div id="client">
+            <div class="to">RECEIPT TO:</div>
+            <h2 class="name">{{ record.student.admin.first_name }} {{ record.student.admin.last_name }}</h2>
+            <div class="address">{{ record.student.billing_address }}</div>
+            <div class="email"><a href="mailto:{{ record.student.admin.email }}">{{ record.student.admin.email }}</a></div>
+          </div>
+          <div id="invoice">
+            <h1>#{{ record.id }}</h1>
+            <div class="date">Date of Receipt: {{ record.date }}</div>
+          </div>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th class="no">Number</th>
+              <th class="desc">DESCRIPTION</th>
+              <th class="unit">FEE BALANCE</th>
+              <th class="paid">PAID</th>
+              <th class="balance">NEW BALANCE</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="no">1</td>
+              <td class="desc">{{ record.fee_type }}</td>
+              <td class="unit">Kes{{ record.fee_balance }}</td>
+              <td class="total">Kes{{ record.amount_paid }}</td>
+              <td class="balance">Kes{{ record.new_balance }}</td>
+            </tr>
+          </tbody>
+        </table>
+        <div id="thanks">Thank you!</div>
+        <div id="notices">
+          <div>NOTICE:</div>
+          <div class="notice">Kindly keep this receipt for your records.</div>
+        </div>
+      </main>
+    </div>
+    {% endfor %}
+    <footer>
+      Receipt was created on a computer and is valid without the signature and seal.
+    </footer>
+  </body>
+</html>
+

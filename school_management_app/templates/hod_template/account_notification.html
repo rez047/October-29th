@@ -1,0 +1,214 @@
+{% extends 'hod_template/base_template.html' %}
+{% load static %}
+{% block page_title %}
+<i class="nav-icon fas fa-chalkboard-teacher"></i> SEND ACCOUNTANT NOTIFICATIONS
+{% endblock page_title %}
+{% block custom_css %}
+<link rel="stylesheet" href="{% static "plugins/datatables-bs4/css/dataTables.bootstrap4.min.css" %}">
+<link rel="stylesheet" href="{% static "plugins/datatables-responsive/css/responsive.bootstrap4.min.css" %}">
+<link rel="stylesheet" href="{% static "plugins/datatables-buttons/css/buttons.bootstrap4.min.css" %}">
+{% endblock custom_css %}
+{% block main_content %}
+<!-- Main content -->
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-12">
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">Send Accountant Notifications</h3>
+          </div>
+          <div class="card-body">
+            <table id="example1" class="table table-striped">
+              <thead>
+                <tr>
+                  <th style="width: 30px;">ID</th>
+                  <th>First Name</th>
+                  <th>Last Name</th>
+                  <th>Username</th>
+                  <th>Email</th>
+                  <th style="width: 130px;">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for account in accounts %}
+                <tr>
+                  <td>{{ account.admin.id }}</td>
+                  <td>{{ account.admin.first_name }}</td>
+                  <td>{{ account.admin.last_name }}</td>
+                  <td>{{ account.admin.username }}</td>
+                  <td>{{ account.admin.email }}</td>
+                  <td><a href="#" class="btn btn-success show_notification" data-toggle="modal"
+                      data-target="#myModal">SEND NOTIFICATION</a></td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">SENT NOTIFICATIONS</h3>
+          </div>
+          <div class="card-body">
+            {% if messages %}
+            <div class="form-group">
+              {% for message in messages %}
+              {% if message.tags == 'error' %}
+              <div class="alert alert-danger">{{ message }}</div>
+              {% endif %}
+              {% if message.tags == 'success' %}
+              <div class="alert alert-success">{{ message }}</div>
+              {% endif %}
+              {% endfor %}
+            </div>
+            {% endif %}
+            <table id="example6" class="table table-striped">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>First Name</th>
+                  <th>Last Name</th>
+                  <th>Notification Message</th>
+                  <th>Date Sent</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for a in notification %}
+                <tr>
+                  <td style="width: 34px;">{{ a.id }}</td>
+                  <td style="width: 200px;">{{ a.account_id.admin.first_name }}</td>
+                  <td style="width: 200px;">{{ a.account_id.admin.last_name }}</td>
+                  <td>{{ a.message }}</td>
+                  <td style="width: 210px;">{{ a.created_at }}</td>
+                  <td style="width: 75px;"><a href="/delete_account_notifications/{{ a.id }}" class="btn btn-danger confirm-delete" title="Delete" data-toggle="modal"
+                      data-target="#deleteNotification" id="deleteButton{{a.id}}">DELETE</a></td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="modal fade" id="myModal" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">SEND NOTIFICATION TO <span id="name_span"></span></h4>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <input required type="text" name="message" class="form-control" id="message_not" placeholder="Type Notification Here">
+          <input type="hidden" name="student_id" class="form-control" id="student_id">
+        </div>
+        <div class="form-group">
+          <button class="btn btn-info btn-block send_notification_btn" type="button">SEND NOTIFICATION</button>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">BACK</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="deleteNotification" tabindex="-1" caller-id="" role="dialog" aria-labelledby="deleteNotificationLabel"
+  aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="deleteNotificationLabel"><i class="fas fa-trash"></i>DELETE NOTIFICATION</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body confirm-delete">
+        Are you sure you want to delete notification?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">CANCEL</button>
+        <button type="button" class="btn btn-danger" data-dismiss="modal" id="confirmDeleteButtonModal">DELETE</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock main_content %}
+{% block custom_js %}
+<script>
+  $(".show_notification").click(function(){
+      var student_id=$(this).parents("tr").children("td:eq(0)").text();
+      var student_name=$(this).parents("tr").children("td:eq(2)").text();
+      console.log(student_id);
+      $("#student_id").val(student_id);
+      $("#name_span").text(student_name);
+
+  });
+
+  $(".send_notification_btn").click(function(){
+      var id=$("#student_id").val();
+      var message=$("#message_not").val();
+      sendNotification(id,message);
+  });
+
+  function sendNotification(id,message){
+           $.ajax({
+            url:'{% url 'send_account_notification' %}',
+            type:'POST',
+            data:{id:id,message:message},
+        })
+        .done(function(response){
+            if(response=="True"){
+                alert("Sent notification");
+            }
+            else{
+                alert("An error has occurred");
+            }
+        });
+  }
+</script>
+<!-- DataTables  & Plugins -->
+<script src="{% static "plugins/datatables/jquery.dataTables.min.js" %}"></script>
+<script src="{% static "plugins/datatables-bs4/js/dataTables.bootstrap4.min.js" %}"></script>
+<script src="{% static "plugins/datatables-responsive/js/dataTables.responsive.min.js" %}"></script>
+<script src="{% static "plugins/datatables-responsive/js/responsive.bootstrap4.min.js" %}"></script>
+<script src="{% static "plugins/datatables-buttons/js/dataTables.buttons.min.js" %}"></script>
+<script src="{% static "plugins/datatables-buttons/js/buttons.bootstrap4.min.js" %}"></script>
+<script src="{% static "plugins/jszip/jszip.min.js" %}"></script>
+<script src="{% static "plugins/pdfmake/pdfmake.min.js" %}"></script>
+<script src="{% static "plugins/pdfmake/vfs_fonts.js" %}"></script>
+<script src="{% static "plugins/datatables-buttons/js/buttons.html5.min.js" %}"></script>
+<script src="{% static "plugins/datatables-buttons/js/buttons.print.min.js" %}"></script>
+<script src="{% static "plugins/datatables-buttons/js/buttons.colVis.min.js" %}"></script>
+<script>
+  $(function () {
+    $("#example1").DataTable({
+      "responsive": true, "lengthChange": false, "autoWidth": false,
+      "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+    }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+  });
+</script>
+<script>
+  $(function () {
+    $("#example6").DataTable({
+      "responsive": true, "lengthChange": true, "autoWidth": false,
+    }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+  });
+</script>
+<script type="text/javascript">
+  $(document).on('click', '.confirm-delete', function () {
+    $("#deleteNotification").attr("caller-id", $(this).attr("id"));
+  });
+
+  $(document).on('click', '#confirmDeleteButtonModal', function () {
+    var caller = $("#confirmDeleteButtonModal").closest(".modal").attr("caller-id");
+    window.location = $("#".concat(caller)).attr("href");
+  });
+</script>
+{% endblock custom_js %}

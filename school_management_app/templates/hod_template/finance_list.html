@@ -1,0 +1,23 @@
+{% extends 'hod_template/base_template.html' %}
+{% load static %}
+
+{% block page_title %}
+{% block custom_css %}
+<link rel="stylesheet" href="{% static "plugins/datatables-bs4/css/dataTables.bootstrap4.min.css" %}">
+<link rel="stylesheet" href="{% static "plugins/datatables-responsive/css/responsive.bootstrap4.min.css" %}">
+<link rel="stylesheet" href="{% static "plugins/datatables-buttons/css/buttons.bootstrap4.min.css" %}">
+{% endblock custom_css %}
+<i class="nav-icon fas fa-book"></i> MANAGE FINANCES <a href="/finances/create/" class="btn btn-success shadow-custom">ADD Finance</a>
+{% endblock page_title %}
+
+{% block main_content %}
+<h1>Finance List</h1>
+<ul>
+  {% for finance in finances %}
+    <li><a href="{% url 'finance_detail' finance.id %}">{{ finance.student }}</a></li>
+  {% empty %}
+    <li>No finances available.</li>
+  {% endfor %}
+</ul>
+{% endblock main_content %}
+

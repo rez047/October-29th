@@ -1,0 +1,107 @@
+
+{% extends 'hod_template/base_template.html' %}
+{% block page_title %}
+Manage Invoice
+{% endblock page_title %}
+{% block main_content %}
+    <!-- Main content -->
+    <section class="content">
+      <div class="container-fluid">
+
+
+           <div class="row">
+          <div class="col-12">
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title">Invoice Details</h3>
+
+                <div class="card-tools">
+                  <div class="input-group input-group-sm" style="width: 150px;">
+                    <input type="text" name="table_search" class="form-control float-right" placeholder="Search">
+
+                    <div class="input-group-append">
+                      <button type="submit" class="btn btn-default"><i class="fas fa-search"></i></button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+<form action="{% url 'manage_invoice' %}" method="post">
+    <div class="card">
+        <header class="card-header">
+            <p class="card-header-title">
+                All Orders / Change Order Status &nbsp;<button class="button is-rounded is-info">
+                    <a href="{% url 'invoice_create' %}" class="has-text-white">Create Invoice</a></button>
+            </p>
+        </header>
+        <div class="card-content">
+            <div class="content">              
+              <!-- /.card-header -->
+              <div class="card-body table-responsive p-0">
+                <table class="table table-hover text-nowrap">
+                  <thead>
+                    <tr>
+                      <th>INVOICE ID</th>
+                      <th>STUDENT NAME</th>
+                      <th>DATE</th>
+                      <th>DUE DATE</th>
+                      <th>BALANCE</th>
+                      <th>BALANCE</th>
+                      <th>STATUS</th>
+                      <th>View</th>
+                      <th>Download</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                  {% for invoice in invoices %}
+                    <tr>
+                      <td>{{ invoice.id }}</td>
+                      <td>{{ invoice.student }}</td>
+                      <td>{{ invoice.date }}</td>
+                      <td>{{ invoice.due_date }}</td>
+                      <td>{{ invoice.total_amount }} </td>
+                      <td class="level-right">
+                                {% if invoice.get_status %}
+                                <a class="button is-small is-success" href="#">Paid</a>
+                                {% else %}
+                                <a class="button is-small is-warning" href="#">Not Paid</a>
+                                {% endif %}
+                            </td>
+                            <td width="1%"><a href="{% url 'invoice_detail' id=invoice.id %}">
+                                <div class="button is-small is-info">View</div>
+                            </a></td>
+                            <td width="1%"><a href="{% url 'invoice_download' id=invoice.id %}">Download</a></td>
+                        </tr>
+                        {% endfor %}
+
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+    </div><br /><br /><br />
+    <div class="card has-background-white-ter">
+        <header class="card-header">
+            <p class="card-header-title">
+                Change Order Status
+            </p>
+        </header>
+        <div class="card-content">
+            <div class="select is-rounded">
+                <select id="status" name="status">
+                    <option value="1">Paid</option>
+                    <option value="0">Not Paid</option>
+                </select>
+            </div>
+            <input class="button  is-info is-rounded" type="submit" class="btn" value="Change Status" name="mybtn">
+        </div>
+    </div>
+</form>
+      </div>
+    </section>
+    <!-- /.content -->
+{% endblock main_content %}
+
+
+
+          
+

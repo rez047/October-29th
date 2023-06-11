@@ -1,0 +1,36 @@
+certifi==2019.11.28
+chardet==3.0.4
+Django==3.2.1
+djangorestframework==3.12.4
+pytz==2021.1
+requests==2.22.0
+six==1.14.0
+sqlparse==0.4.1
+
+-- Create the Invoice table
+CREATE TABLE school_management_app_invoice (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    student VARCHAR(255),
+    student_email VARCHAR(255),
+    billing_address TEXT DEFAULT '2348',
+    date DATE,
+    due_date DATE,
+    message TEXT DEFAULT 'this is a default message.',
+    total_amount DECIMAL(9, 2),
+    status BOOLEAN DEFAULT 0,
+    paid DECIMAL(9, 2),
+    balance DECIMAL(9, 2)
+);
+
+-- Create the LineItem table
+CREATE TABLE school_management_app_lineitem (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    student_id INTEGER,
+    service TEXT,
+    description TEXT,
+    quantity INTEGER,
+    rate DECIMAL(9, 2),
+    amount DECIMAL(9, 2),
+    FOREIGN KEY (student_id) REFERENCES school_management_app_invoice(id)
+);
+

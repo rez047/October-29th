@@ -1,0 +1,288 @@
+{% extends 'student_template/base_template.html' %}
+{% block page_title %}
+<i class="nav-icon fas fa-tachometer-alt"></i> НOME
+{% endblock page_title %}
+{% block main_content %}
+{% load static %}
+
+<section class="content">
+    <div class="card">
+  <img src="{% static 'dist/img/founder.jpg' %}" alt="Card Image" class="card-img-top">
+  <div class="card-body">
+    <h5 class="card-title">THE FOUNDER</h5>
+    <p class="card-text"><p>Rev. Joel Kandie Chebii, the founder of Eldo Valley Baptist Academy, is a remarkable individual who was born in a village in Baringo, Kenya. While his origins lie in a rural setting, he has expanded his work and influence on an international level.</p>
+
+<p>Apart from his involvement in education as the founder of Eldo Valley Baptist Academy, Rev. Joel Kandie Chebii has dedicated his efforts to defending the rights of workers and laborers. He works closely with the Central Organization of Trade Unions (COTU) in Kenya, collaborating with Francis Atwoli, a prominent labor leader and Secretary-General of COTU.</p>
+
+<p>By championing workers' rights, Rev. Joel Kandie Chebii strives to ensure fair treatment, just wages, and improved working conditions for laborers in various sectors. His commitment to this cause reflects his deep-rooted belief in social justice and equality.</p>
+
+<p>Rev. Joel Kandie Chebii's journey from a humble village in Baringo to working on an international level demonstrates his passion and dedication to making a positive impact in society. Through his work in education and labor advocacy, he aims to uplift individuals and communities, fostering a more equitable and just society.</p>
+
+<p>In addition to his educational and labor advocacy roles, Rev. Joel Kandie Chebii is also the pastor and leader of Eldo Valley Baptist Church. He faithfully serves as a spiritual guide and mentor to his congregation, offering guidance, support, and teaching based on his strong Christian faith.</p>
+
+<p>As the senior reverend of Eldo Valley Baptist Church, Rev. Joel Kandie Chebii fosters a community of believers who gather to worship, study the Bible, and grow in their faith. His leadership is characterized by a deep commitment to the principles and teachings of Christianity.</p>
+
+<p>Rev. Joel Kandie Chebii's strong Christian convictions influence his approach to education, labor advocacy, and his interactions with others. His faith acts as a driving force behind his dedication to justice, compassion, and service to others. It shapes his worldview and guides his actions as he seeks to make a positive impact on the lives of individuals and society as a whole.</p>
+
+<p>Through his multifaceted roles as an educator, labor advocate, and pastor, Rev. Joel Kandie Chebii exemplifies a steadfast commitment to his Christian faith, inspiring and uplifting those around him.</p>
+    <a href="#" class="btn btn-primary">To The Top</a>
+  </div>
+</div>
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-lg-3 col-6">
+        <div class="small-box bg-info shadow-custom">
+          <div class="inner">
+            <h3>{{ total_attendance }}</h3>
+            <p>Total Attendance</p>
+          </div>
+          <div class="icon">
+            <i class="ion ion-stats-bars"></i>
+          </div>
+          <a href="{% url 'parent_view_attendance' %}" class="small-box-footer">More info... <i
+              class="fas fa-arrow-circle-right"></i></a>
+        </div>
+      </div>
+      <div class="col-lg-3 col-6">
+        <div class="small-box bg-success shadow-custom">
+          <div class="inner">
+            <h3>{{ attendance_absent }}</h3>
+            <p>Absent count</p>
+          </div>
+          <div class="icon">
+            <i class="ion ion-stats-bars"></i>
+          </div>
+          <a href="{% url 'parent_view_attendance' %}" class="small-box-footer">More info... <i
+              class="fas fa-arrow-circle-right"></i></a>
+        </div>
+      </div>
+      <div class="col-lg-3 col-6">
+        <div class="small-box bg-warning shadow-custom">
+          <div class="inner">
+            <h3>{{ attendance_present }}</h3>
+            <p>Present count</p>
+          </div>
+          <div class="icon">
+            <i class="ion ion-stats-bars"></i>
+          </div>
+          <a href="{% url 'parent_view_attendance' %}" class="small-box-footer">More info... <i
+              class="fas fa-arrow-circle-right"></i></a>
+        </div>
+      </div>
+      <div class="col-lg-3 col-6">
+        <div class="small-box bg-danger shadow-custom">
+          <div class="inner">
+            <h3>{{ subjects }}</h3>
+            <p>Subjects</p>
+          </div>
+          <div class="icon">
+            <i class="ion ion-pie-graph"></i>
+          </div>
+          <a href="#" class="small-box-footer">More info... <i class="fas fa-arrow-circle-right"></i></a>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-lg-6">
+        <div class="card card-danger shadow-custom">
+          <div class="card-header">
+            <h3 class="card-title">User Graph</h3>
+            <div class="card-tools">
+              <button type="button" class="btn btn-tool" style="box-shadow: none !important;" data-card-widget="collapse"><i class="fas fa-minus"></i>
+              </button>
+              <button type="button" class="btn btn-tool" style="box-shadow: none !important;" data-card-widget="remove"><i class="fas fa-times"></i></button>
+            </div>
+          </div>
+          <div class="card-body">
+            <canvas id="pieChart"
+              style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <div class="card card-success shadow-custom">
+          <div class="card-header">
+            <h3 class="card-title">User Statistics</h3>
+            <div class="card-tools">
+              <button type="button" class="btn btn-tool" style="box-shadow: none !important;" data-card-widget="collapse"><i class="fas fa-minus"></i>
+              </button>
+              <button type="button" class="btn btn-tool" style="box-shadow: none !important;" data-card-widget="remove"><i class="fas fa-times"></i></button>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="chart">
+              <canvas id="barChart"
+                style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% endblock main_content %}
+{% block custom_js %}
+<script>
+    $(document).ready(function(){
+
+            var subjects={{ data_name|safe }};
+            var data1={{ data1 }};
+            var data2={{ data2 }};
+            //Data Set for PIE CHart
+           var pieData  = {
+              labels: [
+                  'Present',
+                  'Absent',
+                  'Total'
+              ],
+              datasets: [
+                {
+                  data: [{{ attendance_absent }},{{ attendance_present }},{{ total_attendance }}],
+                  backgroundColor : ['#f56954', '#00a65a','#ffc107'],
+                }
+              ]
+            }
+
+
+            //Data Set for Bar Chart
+                var areaChartData = {
+                  labels  : subjects,
+                  datasets: [
+                    {
+                      label               : 'Present',
+                      backgroundColor     : 'rgba(60,141,188,0.9)',
+                      borderColor         : 'rgba(60,141,188,0.8)',
+                      pointRadius          : false,
+                      pointColor          : '#3b8bba',
+                      pointStrokeColor    : 'rgba(60,141,188,1)',
+                      pointHighlightFill  : '#fff',
+                      pointHighlightStroke: 'rgba(60,141,188,1)',
+                      data                : data1
+                    },
+                    {
+                      label               : 'Absent',
+                      backgroundColor     : 'rgba(210, 214, 222, 1)',
+                      borderColor         : 'rgba(210, 214, 222, 1)',
+                      pointRadius         : false,
+                      pointColor          : 'rgba(210, 214, 222, 1)',
+                      pointStrokeColor    : '#c1c7d1',
+                      pointHighlightFill  : '#fff',
+                      pointHighlightStroke: 'rgba(220,220,220,1)',
+                      data                : data2
+                    },
+                  ]
+                }
+
+
+            var pieChartCanvas = $('#pieChart').get(0).getContext('2d')
+            var pieOptions     = {
+              maintainAspectRatio : false,
+              responsive : true,
+            }
+            //Create pie or douhnut chart
+            // You can switch between pie and douhnut using the method below.
+            var pieChart = new Chart(pieChartCanvas, {
+              type: 'pie',
+              data: pieData,
+              options: pieOptions
+            });
+
+
+            var barChartCanvas = $('#barChart').get(0).getContext('2d')
+            var barChartData = jQuery.extend(true, {}, areaChartData)
+            var temp1 = areaChartData.datasets[0]
+            barChartData.datasets[0] = temp1
+
+            var barChartOptions = {
+              responsive              : true,
+              maintainAspectRatio     : false,
+              datasetFill             : false
+            }
+
+            var barChart = new Chart(barChartCanvas, {
+              type: 'bar',
+              data: barChartData,
+              options: barChartOptions
+            })
+    })
+</script>
+<script src="https://www.gstatic.com/firebasejs/7.14.6/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/7.14.6/firebase-messaging.js"></script>
+<script>
+    var firebaseConfig = {
+        apiKey: "YOUR_API_KEY",
+        authDomain: "FIREBASE_AUTH_URL",
+        databaseURL: "FIREBASE_DATABASE_URL",
+        projectId: "FIREBASE_PROJECT_ID",
+        storageBucket: "FIREBASE_STORAGE_BUCKET_URL",
+        messagingSenderId: "FIREBASE_SENDER_ID",
+        appId: "FIREBASE_APP_ID",
+        measurementId: "FIREBASE_MEASUREMENT_ID"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const messaging=firebase.messaging();
+
+    function IntitalizeFireBaseMessaging() {
+        messaging
+            .requestPermission()
+            .then(function () {
+                console.log("Notification Permission");
+                return messaging.getToken();
+            })
+            .then(function (token) {
+                console.log("Token : "+token);
+                sendToServer(token);
+            })
+            .catch(function (reason) {
+                console.log(reason);
+            });
+    }
+
+    messaging.onMessage(function (payload) {
+        console.log(payload);
+        const notificationOption={
+            body:payload.notification.body,
+            icon:payload.notification.icon
+        };
+
+        if(Notification.permission==="granted"){
+            var notification=new Notification(payload.notification.title,notificationOption);
+
+            notification.onclick=function (ev) {
+                ev.preventDefault();
+                window.open(payload.notification.click_action,'_blank');
+                notification.close();
+            }
+        }
+
+    });
+    messaging.onTokenRefresh(function () {
+        messaging.getToken()
+            .then(function (newtoken) {
+                console.log("New Token : "+ newtoken);
+                sendToServer(newtoken);
+            })
+            .catch(function (reason) {
+                console.log(reason);
+            })
+    });
+
+    function sendToServer(token){
+         $.ajax({
+                url:'{% url 'student_fcmtoken_save' %}',
+                type:'POST',
+                data:{token:token},
+            })
+            .done(function(response){
+                if(response=="True"){
+                    console.log("Token Save")
+                }
+                else{
+                    console.log("Error in Token Save")
+                }
+            });
+    }
+    IntitalizeFireBaseMessaging();
+</script>
+{% endblock custom_js %}

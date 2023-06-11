@@ -1,0 +1,71 @@
+{% extends 'account_template/base_template.html' %}
+
+{% block page_title %}
+<i class="nav-icon fas fa-file-invoice-dollar"></i> ADD FINANCIAL RECORD <a href="/account_financial_record_list" class="btn btn-success">FINANCIAL RECORD LIST</a>
+{% endblock page_title %}
+
+{% block main_content %}
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card card-primary">
+          <div class="card-header">
+            <h3 class="card-title">Add Financial Record</h3>
+          </div>
+          <form role="form" action="/account_add_financial_record" method="post">
+            {% csrf_token %}
+            <div class="card-body">
+              <div class="form-group">
+                <label>Student:</label>
+                <select class="form-control" name="student_id">
+                  {% for student in students %}
+                  <option value="{{ student.id }}">{{ student.first_name }} {{ student.last_name }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Date:</label>
+                <input required type="date" class="form-control" name="date">
+              </div>
+              <div class="form-group">
+                <label>Fee Type:</label>
+                <select required class="form-control" name="fee_type">
+                  <option value="lunch">Lunch</option>
+                  <option value="transport">Transport</option>
+                  <option value="tuition">Tuition</option>
+                  <option value="transport and lunch">Transport and Lunch</option>
+                  <option value="tuition and transport">Tuition and Transport</option>
+                  <option value="tuition and lunch">Tuition and Lunch</option>
+                  <option value="tuition, lunch and transport">Tuition, Lunch and Transport</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Amount Paid:</label>
+                <input required type="number" step="0.01" class="form-control" name="amount_paid">
+              </div>
+              <div class="form-group">
+                {% if messages %}
+                  {% for message in messages %}
+                    {% if message.tags == 'error' %}
+                      <div class="alert alert-danger" style="margin-top:10px">{{ message }}</div>
+                    {% endif %}
+                    {% if message.tags == 'success' %}
+                      <div class="alert alert-success" style="margin-top:10px">{{ message }}</div>
+                    {% endif %}
+                  {% endfor %}
+                {% endif %}
+              </div>
+            </div>
+            <div class="card-footer">
+              <button type="submit" class="btn btn-primary btn-block">Add Financial Record</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock main_content %}
+

@@ -1,0 +1,101 @@
+{% extends 'hod_template/base_template.html' %}
+
+{% block page_title %}
+<i class="nav-icon fas fa-file-invoice-dollar"></i> ADD FINANCIAL RECORD <a href="/financial_record_list" class="btn btn-success">FINANCIAL RECORD LIST</a>
+{% endblock page_title %}
+
+{% block main_content %}
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card card-primary">
+          <div class="card-header">
+            <h3 class="card-title">Add Financial Record</h3>
+          </div>
+          <form role="form" action="/add_financial_record" method="post">
+            {% csrf_token %}
+            <div class="card-body">
+              <div class="form-group">
+                <label>Student:</label>
+                <select class="form-control" name="student_id">
+                  {% for student in students %}
+                  <option value="{{ student.id }}">{{ student.first_name }} {{ student.last_name }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Date:</label>
+                <input required type="date" class="form-control" name="date">
+              </div>
+              <div class="form-group">
+                <label>Fee Type:</label>
+                <select required class="form-control" name="fee_type" id="fee_type_select">
+                  <option value="lunch">Lunch</option>
+                  <option value="transport">Transport</option>
+                  <option value="tuition">Tuition</option>
+                  <option value="transport_and_lunch">Transport and Lunch</option>
+                  <option value="tuition_and_transport">Tuition and Transport</option>
+                  <option value="tuition_and_lunch">Tuition and Lunch</option>
+                  <option value="tuition_lunch_and_transport">Tuition, Lunch and Transport</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Amount Paid:</label>
+                <input required type="number" step="0.01" class="form-control" name="amount_paid">
+              </div>
+              <div class="form-group">
+                <label>Default Balance:</label>
+                <span id="default_balance_span">0</span>
+              </div>
+              <div class="form-group">
+                {% if messages %}
+                  {% for message in messages %}
+                    {% if message.tags == 'error' %}
+                      <div class="alert alert-danger" style="margin-top:10px">{{ message }}</div>
+                    {% endif %}
+                    {% if message.tags == 'success' %}
+                      <div class="alert alert-success" style="margin-top:10px">{{ message }}</div>
+                    {% endif %}
+                  {% endfor %}
+                {% endif %}
+              </div>
+            </div>
+            <div class="card-footer">
+              <button type="submit" class="btn btn-primary btn-block">Add Financial Record</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  // Retrieve the default fees data from the server-side
+  var defaultFees = {
+    'lunch': 1000,
+    'transport': 2000,
+    'tuition': 100000,
+    'transport_and_lunch': 0,
+    'tuition_and_transport': 0,
+    'tuition_and_lunch': 0,
+    'tuition_lunch_and_transport': 0,
+    'other': 0,
+  };
+
+  // Get the fee type select element
+  var feeTypeSelect = document.getElementById('fee_type_select');
+  // Get the default balance span element
+  var defaultBalanceSpan = document.getElementById('default_balance_span');
+
+  // Add event listener to fee type select element
+  feeTypeSelect.addEventListener('change', function() {
+    var selectedFeeType = feeTypeSelect.value;
+    var defaultBalance = defaultFees[selectedFeeType] || 0;
+    defaultBalanceSpan.textContent = defaultBalance;
+  });
+</script>
+{% endblock main_content %}
+
