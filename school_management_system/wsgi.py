@@ -8,10 +8,10 @@ https://docs.djangoproject.com/en/2.2/howto/deployment/wsgi/
 """
 
 import os
-from school_management_system.wsgi import application
 
 from django.core.wsgi import get_wsgi_application
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'school_management_system.settings')
 
 application = get_wsgi_application()
+
