@@ -25,83 +25,6 @@
   <link rel="stylesheet" type="text/css" href="{% static "custom/css/dark-mode-login.css" %}">
   <link rel="preconnect" href="https://fonts.gstatic.com">
   <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@900&display=swap" rel="stylesheet">
-
-  <style>
-    .container-login100 {
-      background: linear-gradient(to bottom right, #2980b9, #6dd5fa);
-      border-radius: 10px;
-      box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
-    }
-
-    .wrap-input100 {
-      position: relative;
-    }
-
-    .wrap-input100 input {
-      padding-left: 40px;
-    }
-
-    .wrap-input100 .input100:focus + .focus-input100::before {
-      width: 100%;
-    }
-
-    .input100::placeholder {
-      color: #999999;
-    }
-
-    .focus-input100::before {
-      content: "";
-      display: block;
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      width: 0;
-      height: 2px;
-      background-color: #6dd5fa;
-      transition: width 0.4s;
-    }
-
-    .symbol-input100 {
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
-      left: 10px;
-      font-size: 18px;
-      color: #999999;
-    }
-
-    .symbol-input100 i {
-      line-height: inherit;
-    }
-
-    .login100-form-btn {
-      background: linear-gradient(to right, #2980b9, #6dd5fa);
-      border-radius: 25px;
-      padding: 15px 30px;
-      font-size: 18px;
-      font-weight: bold;
-      color: #ffffff;
-      transition: all 0.3s ease;
-    }
-
-    .login100-form-btn:hover {
-      background: linear-gradient(to right, #6dd5fa, #2980b9);
-    }
-
-    .txt1 {
-      font-size: 14px;
-      color: #ffffff;
-    }
-
-    .txt1 a {
-      color: #6dd5fa;
-    }
-
-    .txt1 a:hover {
-      color: #2980b9;
-      text-decoration: none;
-    }
-  </style>
 </head>
 
 <body style="background-color: rgb(31, 31, 31);">
@@ -119,7 +42,7 @@
             aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
           </button>
-
+  
           <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
             <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
               <li class="nav-item active">
@@ -129,6 +52,10 @@
               </li>
             </ul>
 
+            <!-- <div class="my-2 my-lg-0">
+              <button class="btn mr-4 en-button"></button>
+              <button class="btn mr-4 mn-button"></button>
+            </div> -->
             <div class="custom-control custom-switch noselect">
               <input type="checkbox" class="custom-control-input" id="darkSwitch">
               <label class="custom-control-label" for="darkSwitch" style="color: aliceblue;">Dark Mode</label>
@@ -139,39 +66,35 @@
     </div>
     <!-- Form -->
     <div class="container-login100 noselect">
-      <div class="wrap-login100 p-l-50 p-r-50 p-t-77 p-b-30 bg-light" style="transition: all 0.4s; -webkit-transition: all 0.4s; -o-transition: all 0.4s; -moz-transition: all 0.4s;"
-        data-aos="zoom-in">
+      <div class="wrap-login100 p-l-50 p-r-50 p-t-77 p-b-30 bg-light" style="transition: all 0.4s; -webkit-transition: all 0.4s; -o-transition: all 0.4s; -moz-transition: all 0.4s;" data-aos="zoom-in">
         <form class="login100-form validate-form" action="/doLogin" method="post" id="demo-form">
           {% csrf_token %}
           <span class="login100-form-title p-b-55">Login</span>
-
-          <div class="wrap-input100 validate-input m-b-16" data-validate="Please enter your email">
-            <input type="email" class="input100 dark-input dark-placeholder" placeholder="Email" name="email"
-              style="transition: all 0.4s; -webkit-transition: all 0.4s; -o-transition: all 0.4s; -moz-transition: all 0.4s;" />
+  
+          <div class="wrap-input100 validate-input m-b-16" data-validate="Хэрэглэгчийн нэрээ хийнэ үү?">
+            <input type="email" class="input100 dark-input dark-placeholder" placeholder="Email" name="email" style="transition: all 0.4s; -webkit-transition: all 0.4s; -o-transition: all 0.4s; -moz-transition: all 0.4s;"/>
             <span class="focus-input100"></span>
             <span class="symbol-input100">
-              <i class="lnr lnr-user dark-icon"></i>
+              <span class="lnr lnr-user dark-icon"></span>
             </span>
           </div>
-
-          <div class="wrap-input100 validate-input m-b-16" data-validate="Please enter your password">
-            <input type="password" class="input100 dark-input dark-placeholder" placeholder="Password" name="password"
-              id="password-field"
-              style="transition: all 0.4s; -webkit-transition: all 0.4s; -o-transition: all 0.4s; -moz-transition: all 0.4s;" />
+  
+          <div class="wrap-input100 validate-input m-b-16" data-validate="Нууц үгээ хийнэ үү?">
+            <input type="password" class="input100 dark-input dark-placeholder" placeholder="Password" name="password" id="password-field" style="transition: all 0.4s; -webkit-transition: all 0.4s; -o-transition: all 0.4s; -moz-transition: all 0.4s;"/>
+            <!-- <span toggle="#password-field" class="fa fa-fw fa-eye field-icon toggle-password" style="position: relative;float: right;"></span> -->
             <span class="focus-input100"></span>
             <span class="symbol-input100">
-              <i class="lnr lnr-lock dark-icon"></i>
+              <span class="lnr lnr-lock dark-icon"></span>
             </span>
             <span class="symbol-inputcustom">
-              <i toggle="#password-field" class="fa fa-fw fa-eye field-icon toggle-password dark-icon"
-                style="pointer-events: all; cursor: pointer;"></i>
+              <span toggle="#password-field" class="fa fa-fw fa-eye field-icon toggle-password dark-icon" style="pointer-events: all; cursor: pointer;"></span>
             </span>
           </div>
-
+  
           <div class="container-login100-form-btn p-t-25">
             <button type="submit" class="login100-form-btn">LOGIN</button>
           </div>
-
+  
           {% if messages %}
           {% for message in messages %}
           {% if message.tags == 'error' %}
@@ -188,32 +111,16 @@
           {% endif %}
           {% endfor %}
           {% endif %}
-
+  
           <div class="text-center w-full p-t-35">
             <span class="txt1">
-              <a class="dark-text forgot-password-text"
-                style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-weight: 700;"
-                href="{% url 'password_reset' %}">Forgot Password</a>
+              <a class="dark-text forgot-password-text" style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-weight: 700;" href="{% url 'password_reset' %}">Forgot Password</a>
             </span>
           </div>
         </form>
       </div>
     </div>
   </div>
-
-  <script src="{% static "custom/vendor/jquery/jquery-3.2.1.min.js" %}"></script>
-  <script src="{% static "custom/vendor/bootstrap/js/popper.js" %}"></script>
-  <script src="{% static "custom/vendor/bootstrap/js/bootstrap.min.js" %}"></script>
-  <script src="{% static "custom/vendor/select2/select2.min.js" %}"></script>
-  <script src="{% static "custom/vendor/tilt/tilt.jquery.min.js" %}"></script>
-  <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
-  <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
-  <script src="{% static "custom/js/main.js" %}"></script>
-  <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@pwabuilder/pwainstall@1.0.22/dist/pwainstall.min.js"></script>
-  <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
-  <script src="{% static "custom/js/login.js" %}"></script>
-  <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 
   <script src="{% static "custom/vendor/jquery/jquery-3.2.1.min.js" %}"></script>
   <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
