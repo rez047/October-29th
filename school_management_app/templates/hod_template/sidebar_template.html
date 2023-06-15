@@ -150,8 +150,8 @@
         <li class="nav-item">
           {% url 'add_student' as add_student %}
           {% url 'manage_student' as manage_student %}
-          {% url 'edit_student' student_id=id as edit_student %}
-          <a href="#" class="nav-link {% if request.path == add_student %} active {% elif request.path == manage_student %} active {% elif request.path == edit_student %} active {% endif %}">
+          {% url 'edit_student' student_id=id as edit_student %}          
+          <a href="#" class="nav-link {% if request.path == add_student %} active {% elif request.path == manage_student %} active {% elif request.path == edit_student %} active {% elif request.path == update_session_year %} active {% endif %}">
             <i class="nav-icon fas fa-user-graduate"></i>
             <p>
               STUDENTS
@@ -281,6 +281,7 @@
         <li class="nav-item">
           {% url 'add_session' as add_session %}
           {% url 'manage_session' as manage_session %}
+          {% url 'update_session_year' as update_session_year %}
           <a href="#" class="nav-link {% if request.path == add_session %} active {% elif request.path == manage_session %} active {% endif %}">
             <i class="nav-icon fas fa-calendar-alt"></i>
             <p>
@@ -304,6 +305,15 @@
                 <i class="nav-icon fas fa-tasks"></i>
                 <p>
                   Manage Term Dates
+                </p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="{% url 'update_session_year' %}"
+                class="nav-link {% if request.path == update_session_year %} active {% endif %}">
+                <i class="nav-icon fas fa-tasks"></i>
+                <p>
+                  Update Term Dates 
                 </p>
               </a>
             </li>
@@ -406,6 +416,7 @@
         <li class="nav-item">
              {% url 'add_financial_record' as add_financial_record %}
              {% url 'financial_record_list' as financial_record_list %}
+             {% url 'default_settings' as default_settings %}
               <a href="#" class="nav-link {% if request.path == add_financial_record %} active {% elif request.path == financial_record_list %} active {% endif %}">
                 <i class="nav-icon fas fa-file-invoice-dollar"></i>
               <p>
@@ -432,6 +443,15 @@
                 </p>
               </a>
             </li>
+            <li class="nav-item">
+              <a href="{% url 'default_settings' %}"
+                class="nav-link {% if request.path == default_settings %} active {% endif %}">
+                <i class="nav-icon fas fa-tasks"></i>
+                <p>
+                  Update Fee STRUCTURE
+                </p>
+              </a>
+            </li>
           </ul>
           </li>
           <li class="nav-item">
@@ -442,7 +462,7 @@
                 INVOICE
               </p>
             </a>
-          </li>
+          </li>          
           <!-- Attendance -->
         <li class="nav-item">
           {% url 'admin_view_attendance' as admin_view_attendance %}

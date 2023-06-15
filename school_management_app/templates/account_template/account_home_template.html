@@ -28,6 +28,54 @@
     <a href="#" class="btn btn-primary">To The Top</a>
   </div>
 </div>
+
+  <div class="container-fluid">
+      <div class="row">
+      <div class="col-lg-3 col-6">
+        <!-- small box -->
+        <div class="small-box bg-info shadow-custom">
+          <div class="inner">
+            <h3>{{ student_count }}</h3>
+
+            <p>Total Students</p>
+          </div>
+          <div class="icon">
+            <i class="nav-icon fas fa-user-graduate"></i>
+          </div>
+          <a  href="{% url 'account_financial_record_list' %}"class="small-box-footer">More info... <i class="fas fa-arrow-circle-right"></i></a>
+        </div>
+      </div>
+      <!-- ./col -->
+      <div class="col-lg-3 col-6">
+        <!-- small box -->
+        <div class="small-box bg-success shadow-custom">
+          <div class="inner">
+            <h3>{{ finance_count }}</h3>
+
+            <p>Total Financial Receipts</p>
+          </div>
+          <div class="icon">
+            <i class="nav-icon fas fa-file-invoice-dollar"></i>
+          </div>
+          <a href="{% url 'account_financial_record_list' %}" class="small-box-footer">More info... <i class="fas fa-arrow-circle-right"></i></a>
+        </div>
+      </div>
+      <div class="col-lg-3 col-6">
+        <!-- small box -->
+        <div class="small-box bg-success shadow-custom">
+          <div class="inner">
+            <h3>{{ leave_count }}</h3>
+
+            <p>Total Leaves Taken</p>
+          </div>
+          <div class="icon">
+            <i class="ion ion-stats-bars"></i>
+          </div>
+          <a href="{% url 'account_apply_leave' %}" class="small-box-footer">More info... <i class="fas fa-arrow-circle-right"></i></a>
+        </div>
+      </div>
+     </div>
+  </section>
      
 
 {% endblock main_content %}

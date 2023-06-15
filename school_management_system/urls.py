@@ -8,8 +8,10 @@ from django.views.static import serve
 from school_management_app import views, HodViews, StaffViews, StudentViews, ParentViews, AccountViews
 from school_management_app.EditResultVIewClass import EditResultViewClass, UpdateSelectedResultView
 from school_management_system import settings
-from school_management_app.HodViews import  InvoiceListView, createInvoice, generate_PDF, view_PDF
+from school_management_app.HodViews import  InvoiceListView, createInvoice, generate_PDF, view_PDF, update_session_year
 from school_management_app.views import bulk_upload, success_page
+
+
 # handler404 = 'school_management_app.views.error_404'
 
 urlpatterns = [
@@ -153,10 +155,16 @@ urlpatterns = [
     path('success-page/', views.success_page, name='success_page'),
     path('add_financial_record', HodViews.add_financial_record, name='add_financial_record'),
     path('financial_record_list/', HodViews.financial_record_list, name='financial_record_list'),
-    path('generate-receipt/<int:student_id>/', HodViews.generate_receipt_pdf, name='generate_receipt_pdf'),
+    path('generate-receipt/<int:record_id>/', HodViews.generate_receipt_pdf, name='generate_receipt_pdf'),
     path('generate-receipts/<int:student_id>/', HodViews.generate_receipt_pdfs, name='generate_receipt_pdfs'),
-    path('account_generate-receipt/<int:student_id>/', AccountViews.account_generate_receipt_pdf, name='account_generate_receipt_pdf'),
-    path('account_generate-receipts/<int:student_id>/', AccountViews.account_generate_receipt_pdfs, name='account_generate_receipt_pdfs'),    
+    path('account_generate-receipt/<int:record_id>/', AccountViews.account_generate_receipt_pdf, name='account_generate_receipt_pdf'),
+    path('account_generate-receipts/<int:student_id>/', AccountViews.account_generate_receipt_pdfs, name='account_generate_receipt_pdfs'), 
+    # URL for the default settings form
+    path('default-settings/', HodViews.default_settings, name='default_settings'),
+    
+    # URL for saving the default settings
+    path('save-default-settings/', HodViews.save_default_settings, name='save_default_settings'),  
+    path('update_session_year/', update_session_year, name='update_session_year'), 
 
     #Staff URL Path
     path('staff_home', StaffViews.staff_home, name="staff_home"),
@@ -186,8 +194,8 @@ urlpatterns = [
     path('delete_tcomment/<str:news_id>/<str:comment_id>', StaffViews.delete_tcomment, name="delete_tcomment"),
     path('teacher/covid19', StaffViews.tcovid19,name="tcovid19"),
     path('update_selected_result/', UpdateSelectedResultView.as_view(), name='update_selected_result'),
-
-
+    path('staff_success-page/', StaffViews.staff_success_page, name='staff_success_page'),
+    path('get_course_name', StaffViews.get_course_name, name="get_course_name"),
     #Student URL Path
     path('student_home', StudentViews.student_home, name="student_home"),
     path('student_view_attendance', StudentViews.student_view_attendance, name="student_view_attendance"),
@@ -209,6 +217,7 @@ urlpatterns = [
     path('delete_scomment/<str:news_id>/<str:comment_id>', StudentViews.delete_scomment, name="delete_scomment"),
     path('student/covid19', StudentViews.scovid19,name="scovid19"),
     path('student_view_financial_record_list',StudentViews.student_view_financial_record_list,name="student_view_financial_record_list"),
+    path('students/', HodViews.students_list, name='students_list'),
     
     #Accountant URL Path
     path('account_home', AccountViews.account_home, name="account_home"),
@@ -227,7 +236,11 @@ urlpatterns = [
     path('delete_acomment/<str:news_id>/<str:comment_id>', AccountViews.delete_acomment, name="delete_acomment"),
     path('account_add_financial_record', AccountViews.account_add_financial_record, name='account_add_financial_record'),
     path('account_financial_record_list/', AccountViews.account_financial_record_list, name='account_financial_record_list'),
+    # URL for the default settings form
+    path('account_default-settings/', AccountViews.account_default_settings, name='account_default_settings'),
     
+    # URL for saving the default settings
+    path('account_save-default-settings/', AccountViews.account_save_default_settings, name='account_save_default_settings'),    
     
     # Parents URL Path
     path('parent_home', ParentViews.parent_home, name="parent_home"),

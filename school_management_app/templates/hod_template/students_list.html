@@ -1,0 +1,89 @@
+{% extends 'hod_template/base_template.html' %}
+{% load static %}
+{% block page_title %}
+{% block custom_css %}
+<link rel="stylesheet" href="{% static "plugins/datatables-bs4/css/dataTables.bootstrap4.min.css" %}">
+<link rel="stylesheet" href="{% static "plugins/datatables-responsive/css/responsive.bootstrap4.min.css" %}">
+<link rel="stylesheet" href="{% static "plugins/datatables-buttons/css/buttons.bootstrap4.min.css" %}">
+<style>
+  .zoomD {
+    max-width: 35px;
+    height: auto;
+    cursor: zoom-in;
+  }
+
+  #lb-back {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+    visibility: hidden;
+    opacity: 0;
+    transition: all ease 0.4s;
+    cursor: zoom-out;
+  }
+
+  #lb-back.show {
+    visibility: visible;
+    opacity: 1;
+  }
+
+  #lb-img {
+    position: relative;
+    top: 53%;
+    left: 0%;
+    transform: translateY(-50%);
+    text-align: center;
+  }
+
+  @media screen and (min-width: 992px) {
+    #lb-img {
+      left: 7%;
+    }
+  }
+
+  #lb-img img {
+    max-width: 100%;
+    max-height: 92vh;
+    height: auto;
+  }
+</style>
+{% endblock custom_css %}
+<i class="nav-icon fas fa-calendar-alt"></i> ADD TERM DATES <a href="/manage_session" class="btn btn-success shadow-custom">MANAGE TERM DATES</a>
+{% endblock page_title %}
+{% block main_content %}
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card card-primary">
+          <div class="card-header">
+            <h3 class="card-title">Students' List</h3>
+          </div>
+<!-- students_list.html -->
+<h1>Students List</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Name</th>
+      <th>Term Dates</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for student in students %}
+      <tr>
+        <td>{{ student.id }}</td>
+        <td>{{ student.admin.get_full_name }}</td>
+        <td>{{ student.session_year_id.session_start_year }} TO {{ student.session_year_id.session_end_year }}</td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+</section>
+{% endblock main_content %}
+

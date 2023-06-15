@@ -28,7 +28,7 @@ from django.template import Context
 from school_management_app.forms import AddStudentForm, EditStudentForm, InvoiceForm,LineItemFormset
 from school_management_app.models import CustomUser, Staffs, Courses, Subjects, Students, SessionYearModel, \
     FeedBackStudent, FeedBackStaffs, FeedBackAccounts, LeaveReportStudent, LeaveReportStaff, LeaveReportAccount, Attendance, AttendanceReport, \
-    NotificationStudent, NotificationStaffs, NotificationAccounts, News, TNews, TComment, SComment, ANews, AComment, AdminHOD, Parents, PNews ,PComment, FeedBackParents, NotificationParents, Invoice, LineItem, Finance, Accounts, FinancialRecord
+    NotificationStudent, NotificationStaffs, NotificationAccounts, News, TNews, TComment, SComment, ANews, AComment, AdminHOD, Parents, PNews ,PComment, FeedBackParents, NotificationParents, Invoice, LineItem, Finance, Accounts, FinancialRecord, DefaultSettings
 
 
 def admin_home(request):
@@ -38,6 +38,7 @@ def admin_home(request):
     course_count=Courses.objects.all().count()
     parent_count=Parents.objects.all().count()
     account_count=Accounts.objects.all().count()
+    finance_count=FinancialRecord.objects.all().count()
 
     user=CustomUser.objects.get(id=request.user.id)
     admin=AdminHOD.objects.get(admin=user)
@@ -88,7 +89,7 @@ def admin_home(request):
 
 
 
-    return render(request,"hod_template/home_content.html",{"student_count":student_count1,"staff_count":staff_count,"parent_count":parent_count,"account_count":account_count,"subject_count":subject_count,"course_count":course_count,"course_name_list":course_name_list,"subject_count_list":subject_count_list,"student_count_list_in_course":student_count_list_in_course,"student_count_list_in_subject":student_count_list_in_subject,"subject_list":subject_list,"staff_name_list":staff_name_list,"attendance_present_list_staff":attendance_present_list_staff,"attendance_absent_list_staff":attendance_absent_list_staff,"student_name_list":student_name_list,"attendance_present_list_student":attendance_present_list_student,"attendance_absent_list_student":attendance_absent_list_student,"admin":admin})
+    return render(request,"hod_template/home_content.html",{"student_count":student_count1,"staff_count":staff_count,"parent_count":parent_count,"account_count":account_count,"subject_count":subject_count,"course_count":course_count,  "finance_count":finance_count, "course_name_list":course_name_list,"subject_count_list":subject_count_list,"student_count_list_in_course":student_count_list_in_course,"student_count_list_in_subject":student_count_list_in_subject,"subject_list":subject_list,"staff_name_list":staff_name_list,"attendance_present_list_staff":attendance_present_list_staff,"attendance_absent_list_staff":attendance_absent_list_staff,"student_name_list":student_name_list,"attendance_present_list_student":attendance_present_list_student,"attendance_absent_list_student":attendance_absent_list_student,"admin":admin})
 
 def add_staff(request):
     user=CustomUser.objects.get(id=request.user.id)
@@ -963,6 +964,7 @@ def edit_anews_save(request):
             messages.error(request,"Failed to Edit News")
             return HttpResponseRedirect(reverse("manage_anews"))
 
+# DELETE ACCOUNTANT COMMENT
 def delete_acomment(request,comment_id,news_id):
     if request.method!="GET":
             return HttpResponse("<h2>Method Not Allowed</h2>")
@@ -971,10 +973,10 @@ def delete_acomment(request,comment_id,news_id):
             a=AComment.objects.get(id=comment_id)
             a.delete()
             messages.success(request,"Successfully deleted Comment")
-            return HttpResponseRedirect(reverse("view_tnews",kwargs={"news_id":news_id}))
+            return HttpResponseRedirect(reverse("view_anews",kwargs={"news_id":news_id}))
         except:
             messages.error(request,"Failed to Delete Comment")
-            return HttpResponseRedirect(reverse("view_tnews",kwargs={"news_id":news_id}))
+            return HttpResponseRedirect(reverse("view_anews",kwargs={"news_id":news_id}))
         
 def view_account_news_comment_edit_save(request):
     a = 1
@@ -1000,8 +1002,8 @@ def view_account_news_comment_edit_save(request):
             messages.error(request, "Failed to Edit Comment ")
             return HttpResponseRedirect(reverse("view_anews",kwargs={"news_id":TNews}))
 
-# DELETE ACCOUNTANT COMMENT
-def delete_acomment(request,comment_id,news_id):
+
+def delete_anews(request,news_id):
     if request.method!="GET":
             return HttpResponse("<h2>Method Not Allowed</h2>")
     else:
@@ -1097,18 +1099,7 @@ def view_student_news_comment_edit_save(request):
             messages.error(request, "Failed to Edit Comment ")
             return HttpResponseRedirect(reverse("view_news",kwargs={"news_id":SNews}))
             
-def delete_anews(request,news_id):
-    if request.method!="GET":
-        return HttpResponse("<h2>Method Not Allowed</h2>")
-    else:
-        try:
-            mv=ANews.objects.get(id=news_id)
-            mv.delete()
-            messages.success(request,"Successfully Deleted News")
-            return HttpResponseRedirect(reverse("manage_anews"))
-        except:
-            messages.error(request,"Failed to Delete News")
-            return HttpResponseRedirect(reverse("manage_anews"))
+
 
 # DELETE STUDENT COMMENT
 def delete_scomment(request,comment_id,news_id):
@@ -1852,7 +1843,6 @@ def generate_PDF(request, id):
 
 def add_financial_record(request):
     user = CustomUser.objects.get(id=request.user.id)
-    
     records = FinancialRecord.objects.all()
     students = CustomUser.objects.filter(user_type=3)
 
@@ -1866,40 +1856,46 @@ def add_financial_record(request):
             student_user = CustomUser.objects.get(id=student_id)
             student = Students.objects.get(admin=student_user)
 
-            # Retrieve the latest financial record for the student of the selected fee type
-            try:
-                latest_record = FinancialRecord.objects.filter(student=student, fee_type=fee_type).latest('created_at')
-                fee_balance = latest_record.new_balance
-            except FinancialRecord.DoesNotExist:
-                # If no previous record exists for the selected fee type, set fee_balance to the default fee for that fee type
-                default_fees = {
-                    'lunch': 1000,
-                    'transport': 2000,
-                    'tuition': 100000,
-                    'transport_and_lunch': 0,
-                    'tuition_and_transport': 0,
-                    'tuition_and_lunch': 0,
-                    'tuition_lunch_and_transport': 0,
-                    'other': 0,
-                }
-                fee_balance = default_fees.get(fee_type, 0)
+            # Retrieve the latest financial record for the student, regardless of the fee type
+            latest_record = FinancialRecord.objects.filter(student=student).latest('created_at')
+            fee_balance = latest_record.new_balance
 
             # Calculate the new balance by subtracting the amount paid from the fee_balance
             new_balance = fee_balance - amount_paid
 
-            # Check if there are previous records for any other fee type
-            other_records_exist = FinancialRecord.objects.filter(student=student).exclude(fee_type=fee_type).exists()
+            # Retrieve the latest new_balance regardless of the fee type
+            latest_new_balance = FinancialRecord.objects.filter(student=student).latest('created_at').new_balance
 
-            if other_records_exist:
-                # Retrieve the latest financial record for the student of any other fee type
-                try:
-                    latest_other_record = FinancialRecord.objects.filter(student=student).exclude(fee_type=fee_type).latest('created_at')
-                    other_fee_balance = latest_other_record.new_balance
+            # Retrieve the default fees and date from the DefaultSettings model
+            try:
+                default_settings = DefaultSettings.objects.first()
+                default_fees = {
+                    'lunch': default_settings.lunch_fee,
+                    'transport': default_settings.transport_fee,
+                    'tuition': default_settings.tuition_fee,
+                    'transport and lunch': default_settings.transport_and_lunch_fee,
+                    'tuition and transport': default_settings.tuition_and_transport_fee,
+                    'tuition and lunch': default_settings.tuition_and_lunch_fee,
+                    'tuition, lunch and transport': default_settings.tuition_lunch_transport_fee,
+                    'other': default_settings.other_fee,
+                }
+                default_date = default_settings.default_date.strftime('%Y-%m-%d')
+            except DefaultSettings.DoesNotExist:
+                default_fees = {
+                    'lunch': 1000,
+                    'transport': 2000,
+                    'tuition': 100000,
+                    'transport and lunch': 0,
+                    'tuition and transport': 0,
+                    'tuition and lunch': 0,
+                    'tuition, lunch and transport': 0,
+                    'other': 0,
+                }
+                default_date = "2023-06-24"  # Set the default date as per your requirement
 
-                    # Add the fee balance of the other fee type to the new balance
-                    new_balance += other_fee_balance
-                except FinancialRecord.DoesNotExist:
-                    pass
+            # Add the default fee for the selected fee type and the latest new_balance
+            fee_balance = default_fees.get(fee_type, 0) + latest_new_balance
+            new_balance = fee_balance - amount_paid
 
             # Create the financial record
             record = FinancialRecord.objects.create(
@@ -1913,23 +1909,119 @@ def add_financial_record(request):
 
             # Redirect or display a success message
             return HttpResponseRedirect(reverse("financial_record_list"))
-        except CustomUser.DoesNotExist:
+        except Students.DoesNotExist:
             error_message = "Failed to add financial record. Student with ID {} not found.".format(student_id)
             return HttpResponse(error_message)
-        except Students.DoesNotExist:
-            error_message = "Failed to add financial record. Student details not found for ID {}.".format(student_id)
-            return HttpResponse(error_message)
         except FinancialRecord.DoesNotExist:
-            error_message = "Failed to add financial record. No previous record found for the selected fee type."
-            return HttpResponse(error_message)
+            # If no previous record exists for the student, set fee_balance to the default fee for the selected fee type
+            default_fees = {
+                'lunch': 1000,
+                'transport': 2000,
+                'tuition': 100000,
+                'transport and lunch': 0,
+                'tuition and transport': 0,
+                'tuition and lunch': 0,
+                'tuition, lunch and transport': 0,
+                'other': 0,
+            }
+            fee_balance = default_fees.get(fee_type, 0)
+
+            # Calculate the new balance by subtracting the amount paid from the fee_balance
+            new_balance = fee_balance - amount_paid
+
+            # Create the financial record
+            record = FinancialRecord.objects.create(
+                student=student,
+                date=date,
+                fee_type=fee_type,
+                fee_balance=fee_balance,
+                amount_paid=amount_paid,
+                new_balance=new_balance
+            )
+
+            # Redirect or display a success message
+            return HttpResponseRedirect(reverse("financial_record_list"))
         except Exception as e:
             error_message = "Failed to add financial record. Error: {}".format(str(e))
             return HttpResponse(error_message)
 
     else:
-        return render(request, "hod_template/financial_record_add.html", {"students": students, "records": records})
+        try:
+            default_settings = DefaultSettings.objects.first()
+            default_fees = {
+                'lunch': default_settings.lunch_fee,
+                'transport': default_settings.transport_fee,
+                'tuition': default_settings.tuition_fee,
+                'transport and lunch': default_settings.transport_and_lunch_fee,
+                'tuition and transport': default_settings.tuition_and_transport_fee,
+                'tuition and lunch': default_settings.tuition_and_lunch_fee,
+                'tuition, lunch and transport': default_settings.tuition_lunch_transport_fee,
+                'other': default_settings.other_fee,
+            }
+            default_date = default_settings.default_date.strftime('%Y-%m-%d')
+        except DefaultSettings.DoesNotExist:
+            default_fees = {
+                'lunch': 1000,
+                'transport': 2000,
+                'tuition': 100000,
+                'transport and lunch': 0,
+                'tuition and transport': 0,
+                'tuition and lunch': 0,
+                'tuition, lunch and transport': 0,
+                'other': 0,
+            }
+            default_date = "2023-06-24"  # Set the default date as per your requirement
+    
+        return render(request, "hod_template/financial_record_add.html", {"students": students, "default_fees": default_fees, "default_date": default_date})
 
 
+
+def default_settings(request):
+    # Retrieve the existing default settings if they exist
+    try:
+        default_settings = DefaultSettings.objects.first()
+    except DefaultSettings.DoesNotExist:
+        default_settings = None
+    
+    # Render the default settings form template with the default settings data
+    return render(request, 'hod_template/default_settings.html', {'default_settings': default_settings})
+def save_default_settings(request):
+    if request.method == 'POST':
+        # Retrieve the form data
+        lunch = request.POST.get('lunch')
+        transport = request.POST.get('transport')
+        tuition = request.POST.get('tuition')
+        default_date = request.POST.get('default_date')
+        
+        # Save the default settings to the database
+        try:
+            default_settings = DefaultSettings.objects.first()
+            if default_settings:
+                # Update existing default settings
+                default_settings.lunch_fee = lunch
+                default_settings.transport_fee = transport
+                default_settings.tuition_fee = tuition
+                default_settings.default_date = default_date
+                default_settings.save()
+            else:
+                # Create new default settings
+                default_settings = DefaultSettings.objects.create(
+                    lunch_fee=lunch,
+                    transport_fee=transport,
+                    tuition_fee=tuition,
+                    default_date=default_date
+                )
+        except Exception as e:
+            # Handle any exceptions that may occur during saving
+            error_message = "Failed to save default settings. Error: {}".format(str(e))
+            return HttpResponse(error_message)
+        
+        # Redirect to the default settings form with a success message
+        messages.success(request, "Successfully saved Fee Structure")
+        return redirect('add_financial_record')
+    
+    # If the request is not a POST, redirect to the default settings form
+    return redirect('default_settings')
 
 
 def financial_record_list(request):
@@ -1939,9 +2031,9 @@ def financial_record_list(request):
     
 
 
-def generate_receipt_pdf(request, student_id):
+def generate_receipt_pdf(request, record_id):
     try:
-        record = FinancialRecord.objects.filter(student__id=student_id).first()
+        record = FinancialRecord.objects.get(id=record_id)
     except FinancialRecord.DoesNotExist:
         return HttpResponse("Financial record does not exist")
 
@@ -2029,6 +2121,29 @@ def generate_pdfs(content):
     buffer.close()
 
     return pdf
+    
+
+
+def update_session_year(request):
+    if request.method == "POST":
+        new_session_year_id = request.POST.get("new_session_year")
+
+        # Update the session year ID of all students
+        Students.objects.update(session_year_id=new_session_year_id)
+
+        return redirect('students_list')  # Redirect to the students list page or any other page you prefer
+
+    session_years = SessionYearModel.object.all()
+    return render(request, 'hod_template/change_session_year.html', {'session_years': session_years})
+
+    
+def students_list(request):
+    # Retrieve the list of students
+    students = Students.objects.all()
+    
+    # Render the students list template with the students data
+    return render(request, 'hod_template/students_list.html', {'students': students})
+
 
 
 

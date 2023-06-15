@@ -40,9 +40,7 @@ def parent_home(request):
 def parent_profile(request):
     user=CustomUser.objects.get(id=request.user.id)
     parent=Parents.objects.get(admin=user)
-    parent_notifcation=Parents.objects.get(admin=request.user.id)
-    notifications=NotificationParents.objects.filter(parent_id=parent_notifcation.id)
-    return render(request,"parent_template/parent_profile.html",{"user":user,"parent":parent,"notifications":notifications})
+    return render(request,"parent_template/parent_profile.html",{"user":user,"parent":parent})
 
 def parent_profile_save(request):
     if request.method!="POST":
@@ -65,14 +63,15 @@ def parent_profile_save(request):
             if password!=None and password!="":
                 customuser.set_password(password)
             customuser.save()
-            parent=Parents.objects.get(admin=customuser)
+
+            parent=Parents.objects.get(admin=customuser.id)
             if profile_pic_url!=None:
                 parent.profile_pic=profile_pic_url
             parent.save()
-            messages.success(request, "Мэдээлэл шинэчлэгдлээ")
+            messages.success(request, "Successfully Updated Profile")
             return HttpResponseRedirect(reverse("parent_profile"))
         except:
-            messages.error(request, "Мэдээлэл шинэчлэхэд алдаа гарлаа")
+            messages.error(request, "Failed to Update Profile")
             return HttpResponseRedirect(reverse("parent_profile"))
 
 def parent_feedback(request):

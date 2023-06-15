@@ -122,22 +122,19 @@ def student_feedback_save(request):
         except:
             messages.error(request, "Failed to Send Feedback")
             return HttpResponseRedirect(reverse("student_feedback"))
-
+            
 def student_profile(request):
     user=CustomUser.objects.get(id=request.user.id)
     student=Students.objects.get(admin=user)
-    student_notifcation=Students.objects.get(admin=request.user.id)
-    notifications=NotificationStudent.objects.filter(student_id=student_notifcation.id)
-    return render(request,"student_template/student_profile.html",{"user":user,"student":student,"notifications":notifications})
+    return render(request,"student_template/student_profile.html",{"user":user,"student":student})
 
 def student_profile_save(request):
     if request.method!="POST":
         return HttpResponseRedirect(reverse("student_profile"))
     else:
-        first_name=request.POST.get("first_name")
-        last_name=request.POST.get("last_name")
+        
+        
         password=request.POST.get("password")
-        address=request.POST.get("address")
         if request.FILES.get('profile_pic',False):
             profile_pic=request.FILES['profile_pic']
             fs=FileSystemStorage()
@@ -145,22 +142,23 @@ def student_profile_save(request):
             profile_pic_url=fs.url(filename)
         else:
             profile_pic_url=None
+        address=request.POST.get("address")
         try:
             customuser=CustomUser.objects.get(id=request.user.id)
-            customuser.first_name=first_name
-            customuser.last_name=last_name
+  
             if password!=None and password!="":
                 customuser.set_password(password)
             customuser.save()
+
             student=Students.objects.get(admin=customuser)
             student.address=address
             if profile_pic_url!=None:
                 student.profile_pic=profile_pic_url
             student.save()
-            messages.success(request, "Successfully Edited Profile")
+            messages.success(request, "Successfully Updated Profile")
             return HttpResponseRedirect(reverse("student_profile"))
         except:
-            messages.error(request, "Failed To Edit Profile")
+            messages.error(request, "Failed to Update Profile")
             return HttpResponseRedirect(reverse("student_profile"))
 
 def student_news(request):

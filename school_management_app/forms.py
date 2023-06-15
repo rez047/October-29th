@@ -111,8 +111,8 @@ class EditResultForm(forms.Form):
     subject_id=forms.ChoiceField(label="Subject",widget=forms.Select(attrs={"class":"form-control"}))
     session_ids=forms.ChoiceField(label="Term Dates",choices=session_list,widget=forms.Select(attrs={"class":"form-control"}))
     student_ids=ChoiceNoValidation(label="Student",widget=forms.Select(attrs={"class":"form-control"}))
-    assignment_marks=forms.CharField(label="Assignment Marks",widget=forms.NumberInput(attrs={"class":"form-control","id":"quantity","min":"1","max":"100"}))
     exam_marks=forms.CharField(label="Exam Marks",widget=forms.NumberInput(attrs={"class":"form-control","id":"quantity","min":"1","max":"100"}))
+    assignment_marks=forms.CharField(label="Total Marks(Additional Scores Included)",widget=forms.NumberInput(attrs={"class":"form-control","id":"quantity","min":"1","max":"100"}))
     
 class InvoiceForm(forms.Form):
     student= forms.CharField(

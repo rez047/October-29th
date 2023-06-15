@@ -131,8 +131,13 @@
             <div class="comments" style="padding: 10px;">
               <hr style="border-top: 1px solid rgb(151, 151, 151);">
               <p class="font-weight-bold">
-                <img src="{% static "dist/img/avatar3.png" %}" class="img-circle elevation-2 mr-2" style="width: 40px;"
-                  alt="User Image">
+    {% if a.staff_id.admin.adminhod %}
+      <img src="{{ a.staff_id.admin.adminhod.profile_pic.url }}" class="img-circle elevation-2 mr-2" style="width: 40px;" alt="User Image">
+    {% elif a.staff_id.admin.staffs %}
+      <img src="{{ a.staff_id.admin.staffs.profile_pic.url }}" class="img-circle elevation-2 mr-2" style="width: 40px;" alt="User Image">
+    {% elif a.staff_id.admin.accounts %}
+      <img src="{{ a.staff_id.admin.students.profile_pic.url }}" class="img-circle elevation-2 mr-2" style="width: 40px;" alt="User Image">
+    {% endif %}
                 {{ a.staff_id.first_name }} {{ a.staff_id.last_name }}&ensp;
                 <span class=" text-muted font-weight-normal">
                   <i class="fas fa-clock"></i>&nbsp;{{ a.created_on | naturaltime }}

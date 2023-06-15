@@ -357,6 +357,19 @@ class LineItem(models.Model):
     def __str__(self):
         return str(self.student)
 
+class DefaultSettings(models.Model):
+    lunch_fee = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    transport_fee = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    tuition_fee = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    transport_and_lunch_fee = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    tuition_and_transport_fee = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    tuition_and_lunch_fee = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    tuition_lunch_transport_fee = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    other_fee = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    default_date = models.DateField(null=True, blank=True)
+
+    def __str__(self):
+        return "Default Settings"
 
         
 class FinancialRecord(models.Model):

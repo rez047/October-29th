@@ -43,7 +43,7 @@
                     <td>{{ record.amount_paid }}</td>
                     <td>{{ record.new_balance }}</td>
                     <td>  <!-- Added a new column for Actions -->
-                      <a href="{% url 'generate_receipt_pdf' record.student.id %}">
+                      <a href="{% url 'generate_receipt_pdf' record.id %}">
                         Generate single
                       </a>
                       <a href="{% url 'generate_receipt_pdfs' record.student.id %}">

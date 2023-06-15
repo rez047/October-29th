@@ -24,8 +24,8 @@
                 <tr>
                   <th>ID</th>
                   <th>Subject</th>
-                  <th>Assignment Marks</th>
                   <th>Exam Marks</th>
+                  <th>Status</th>
                   <th>Total score (Additional scores included)</th>
                   <th>Status</th>
                 </tr>
@@ -35,17 +35,17 @@
                 <tr>
                   <td>{{ row.id }}</td>
                   <td>{{ row.subject_id.subject_name }}</td>
-                  <td>{{ row.subject_assignment_marks }}</td>
+                  <td>{{ row.subject_exam_marks}}</td>
                   <td>
-                    {% if row.subject_assignment_marks >= 60 %}
+                    {% if row.subject_exam_marks >= 60 %}
                     <span class="alert alert-success shadow-custom">Pass</span>
                     {% else %}
                     <span class="alert alert-danger shadow-custom">Fail</span>
                     {% endif %}
                   </td>
-                  <td>{{ row.subject_exam_marks }}</td>
+                  <td>{{ row.subject_assignment_marks }}</td>
                   <td>
-                    {% if row.subject_exam_marks >= 60 %}
+                    {% if row.subject_assignment_marks >= 60 %}
                     <span class="alert alert-success shadow-custom">Pass</span>
                     {% else %}
                     <span class="alert alert-danger shadow-custom">Fail</span>

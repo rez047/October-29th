@@ -1,0 +1,78 @@
+{% extends 'hod_template/base_template.html' %}
+{% load static %}
+{% block page_title %}
+{% block custom_css %}
+<link rel="stylesheet" href="{% static "plugins/datatables-bs4/css/dataTables.bootstrap4.min.css" %}">
+<link rel="stylesheet" href="{% static "plugins/datatables-responsive/css/responsive.bootstrap4.min.css" %}">
+<link rel="stylesheet" href="{% static "plugins/datatables-buttons/css/buttons.bootstrap4.min.css" %}">
+<style>
+  .zoomD {
+    max-width: 35px;
+    height: auto;
+    cursor: zoom-in;
+  }
+
+  #lb-back {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+    visibility: hidden;
+    opacity: 0;
+    transition: all ease 0.4s;
+    cursor: zoom-out;
+  }
+
+  #lb-back.show {
+    visibility: visible;
+    opacity: 1;
+  }
+
+  #lb-img {
+    position: relative;
+    top: 53%;
+    left: 0%;
+    transform: translateY(-50%);
+    text-align: center;
+  }
+
+  @media screen and (min-width: 992px) {
+    #lb-img {
+      left: 7%;
+    }
+  }
+
+  #lb-img img {
+    max-width: 100%;
+    max-height: 92vh;
+    height: auto;
+  }
+</style>
+{% endblock custom_css %}
+
+{% endblock page_title %}
+{% block main_content %}
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card card-primary">
+          <div class="card-header">
+            <h3 class="card-title">Update Term Dates</h3>
+          </div>
+<form method="POST" action="{% url 'update_session_year' %}">
+  For every new term, use the form below to update every student from the previous one to the current one<br><br>
+  {% csrf_token %}
+  <label for="new_session_year">New Term Dates:</label>
+  <select name="new_session_year" id="new_session_year">
+    {% for session_year in session_years %}
+      <option value="{{ session_year.id }}">{{ session_year.session_start_year }}  TO  {{ session_year.session_end_year }}</option>
+    {% endfor %}
+  </select>
+  <button type="submit">Update Term Dates</button>
+</form>
+</section>
+{% endblock main_content %}

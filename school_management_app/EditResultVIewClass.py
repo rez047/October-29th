@@ -55,7 +55,7 @@ class UpdateSelectedResultView(View):
             result.subject_exam_marks = exam_marks
             result.save()
             # Redirect to a success page or return a success message
-            return HttpResponseRedirect(reverse('staff_template/success_page'))
+            return HttpResponseRedirect(reverse('staff_success_page'))
         except StudentResult.DoesNotExist:
             # Handle the case where the result is not found
             return render(request, 'result_not_found.html')

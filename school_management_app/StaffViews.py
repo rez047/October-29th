@@ -10,6 +10,8 @@ from django.shortcuts import render
 from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
 from django.core.files.storage import FileSystemStorage
+from django.shortcuts import get_object_or_404
+
 import datetime
 import traceback
 
@@ -90,6 +92,7 @@ def save_attendance_data(request):
     session_year_id=request.POST.get("session_year_id")
 
     subject_model=Subjects.objects.get(id=subject_id)
+    subjects=Subjects.objects.filter(staff_id=request.user.id)
     session_model=SessionYearModel.object.get(id=session_year_id)
     json_sstudent=json.loads(student_ids)
     #print(data[0]['id'])
@@ -218,10 +221,7 @@ def staff_feedback_save(request):
 def staff_profile(request):
     user=CustomUser.objects.get(id=request.user.id)
     staff=Staffs.objects.get(admin=user)
-    staff_pro=Staffs.objects.get(admin=user)
-    staffs=Staffs.objects.get(admin=request.user.id)
-    notifications=NotificationStaffs.objects.filter(staff_id=staffs.id)
-    return render(request,"staff_template/staff_profile.html",{"notifications":notifications,"user":user,"staff":staff,"staff_pro":staff_pro})
+    return render(request,"staff_template/staff_profile.html",{"user":user,"staff":staff})
 
 def staff_profile_save(request):
     if request.method!="POST":
@@ -251,11 +251,12 @@ def staff_profile_save(request):
             if profile_pic_url!=None:
                 staff.profile_pic=profile_pic_url
             staff.save()
-            messages.success(request, "Successfully Edited Profile")
+            messages.success(request, "Successfully Updated Profile")
             return HttpResponseRedirect(reverse("staff_profile"))
         except:
-            messages.error(request, "Failed to Edit Profile")
+            messages.error(request, "Failed to Update Profile")
             return HttpResponseRedirect(reverse("staff_profile"))
+
             
 def staff_news(request):
     news=TNews.objects.all().order_by('-ndate')
@@ -406,6 +407,19 @@ def save_student_result(request):
 
 
 
+@csrf_exempt
+def get_course_name(request):
+    if request.method == "POST" and request.META.get("HTTP_X_REQUESTED_WITH") == "XMLHttpRequest":
+        subject=Subjects.objects.get(id=subject_id)
+        subject.course_id=course_id
+        course_id = request.POST.get("course_id")
+        course = get_object_or_404(Courses, id=course_id)
+        course_name = course.course_name
+        return JsonResponse({"course_name": course_name,"id":subject_id})
+    else:
+        return JsonResponse({"error": "Invalid request"})
+
+
 
 @csrf_exempt
 def fetch_result_student(request):
@@ -424,6 +438,9 @@ def fetch_result_student(request):
             data.append(result_data)
         
         return JsonResponse(data, safe=False)
+        
+def staff_success_page(request):
+    return render(request, 'staff_template/success_page.html')
 
 def tcovid19(request):
     user=CustomUser.objects.get(id=request.user.id)
