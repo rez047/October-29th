@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>School Management System |  Staff Panel</title>
+  <title>School Management System | Staff Panel</title>
   <link rel="shortcut icon" type="image/jpg" href="{% static "dist/img/home-icon.png" %}"/>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <!-- Font Awesome -->
@@ -42,11 +42,11 @@
     .desktop {
       font-size: 0px;
     }
-
+  
     .desktop-demo {
       font-size: 0px;
     }
-
+  
     .title-c2 {
       font-size: 15px;
     }
@@ -67,14 +67,14 @@
       .desktop {
         font-size: 24px;
       }
-      
+  
       .desktop-demo {
         font-size: 1rem;
         color: #ff1b1b;
         font-weight: 700;
         font-family: sans-serif;
       }
-
+  
       .title-c2 {
         font-size: 16px;
         font-weight: 600;
@@ -125,7 +125,7 @@
       <li class="nav-item d-flex">
         <a class="nav-link">
           <span class="desktop-demo">DEMO</span>
-        <a>
+        </a>
       </li>
       <!-- Notifications -->
       <li class="nav-item dropdown">
@@ -161,31 +161,28 @@
       </li>
       <!-- Notifications end -->
       <!-- User -->
-<!-- User -->
-<li class="nav-item d-flex">
-  <a class="nav-link title-c2" style="white-space: nowrap; cursor: pointer;" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-    <span class="hidden">Welcome, </span>{{ user.last_name }}
-    <i class="fas fa-angle-down"></i>
-  </a>
-  <div class="btn-group">
-    <div class="dropdown-menu dropdown-menu-right">
-      <a class="dropdown-item" href="{% url 'staff_profile' %}"><i class="fas fa-user"></i> Profile</a>
-      <div class="dropdown-divider"></div>
-      <a class="dropdown-item" href="{% url 'logout' %}" style="color: #ce0000;"><i class="fas fa-sign-out-alt"></i> Logout </a>
-    </div>
-  </div>
-</li>
-<!-- User end -->
-
+      <li class="nav-item d-flex">
+        <a class="nav-link title-c2" style="white-space: nowrap; cursor: pointer;" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <span class="hidden">Welcome, </span>{{ user.last_name }}
+          <i class="fas fa-angle-down"></i>
+        </a>
+        <div class="btn-group">
+          <div class="dropdown-menu dropdown-menu-right">
+            <a class="dropdown-item" href="{% url 'staff_profile' %}"><i class="fas fa-user"></i> Profile</a>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item" href="{% url 'logout' %}" style="color: #ce0000;"><i class="fas fa-sign-out-alt"></i> Logout </a>
+          </div>
+        </div>
+      </li>
       <!-- User end -->
     </ul>
   </nav>
 
   <!-- Main Sidebar Container -->
-    {% include 'staff_template/sidebar_template.html' with user=user id=id %}dent
+  {% include 'staff_template/sidebar_template.html' with user=user id=id %}
 
   <!-- Content Wrapper. Contains page content -->
-   <div class="content-wrapper">
+  <div class="content-wrapper">
     <div class="content-header">
       <div class="container-fluid">
         <div id="lb-back">
@@ -194,21 +191,25 @@
         <div class="row mb-2">
           <div class="col-sm-6">
             <h1 class="m-0">
-                {% block page_title %}
-                {% endblock page_title %}
+              {% block page_title %}
+              {% endblock page_title %}
             </h1>
           </div>
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
-              <li class="breadcrumb-item"><a class="btn btn-primary shadow-custom font-weight-bold" href="{% url 'staff_home' %}"><i class="nav-icon fas fa-tachometer-alt mr-2"></i>НOME</a></li>
+              <li class="breadcrumb-item">
+                <a class="btn btn-primary shadow-custom font-weight-bold" href="{% url 'staff_home' %}">
+                  <i class="nav-icon fas fa-tachometer-alt mr-2"></i>HOME
+                </a>
+              </li>
             </ol>
           </div>
         </div>
       </div>
     </div>
-     {% block main_content %}{% endblock main_content %}
+    {% block main_content %}{% endblock main_content %}
   </div>
-    {% include 'staff_template/footer.html' %}
+  {% include 'staff_template/footer.html' %}
 
 </div>
 <!-- jQuery -->
