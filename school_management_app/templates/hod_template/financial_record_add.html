@@ -76,14 +76,14 @@
 <script>
   // Retrieve the default fees data from the server-side
   var defaultFees = {
-    'lunch': 1000,
-    'transport': 2000,
-    'tuition': 100000,
-    'transport_and_lunch': 0,
-    'tuition_and_transport': 0,
-    'tuition_and_lunch': 0,
-    'tuition_lunch_and_transport': 0,
-    'other': 0,
+    'lunch': {{ default_fees.lunch|default:1000 }},
+    'transport': {{ default_fees.transport|default:2000 }},
+    'tuition': {{ default_fees.tuition|default:100000 }},
+    'transport_and_lunch': {{ default_fees.transport_and_lunch|default:0 }},
+    'tuition_and_transport': {{ default_fees.tuition_and_transport|default:0 }},
+    'tuition_and_lunch': {{ default_fees.tuition_and_lunch|default:0 }},
+    'tuition_lunch_and_transport': {{ default_fees.tuition_lunch_transport|default:0 }},
+    'other': {{ default_fees.other|default:0 }},
   };
 
   // Get the fee type select element

@@ -161,7 +161,8 @@ urlpatterns = [
     path('account_generate-receipts/<int:student_id>/', AccountViews.account_generate_receipt_pdfs, name='account_generate_receipt_pdfs'), 
     # URL for the default settings form
     path('default-settings/', HodViews.default_settings, name='default_settings'),
-    
+    path('confirm_delete_record/<int:record_id>/', HodViews.confirm_delete_record, name='confirm_delete_record'),
+    path('delete_financial_record/<int:record_id>/', HodViews.delete_financial_record, name='delete_financial_record'),
     # URL for saving the default settings
     path('save-default-settings/', HodViews.save_default_settings, name='save_default_settings'),  
     path('update_session_year/', update_session_year, name='update_session_year'), 
@@ -240,7 +241,9 @@ urlpatterns = [
     path('account_default-settings/', AccountViews.account_default_settings, name='account_default_settings'),
     
     # URL for saving the default settings
-    path('account_save-default-settings/', AccountViews.account_save_default_settings, name='account_save_default_settings'),    
+    path('account_save-default-settings/', AccountViews.account_save_default_settings, name='account_save_default_settings'), 
+    path('account_confirm_delete_record/<int:record_id>/', AccountViews.account_confirm_delete_record, name='account_confirm_delete_record'),
+    path('account_delete_financial_record/<int:record_id>/', AccountViews.account_delete_financial_record, name='account_delete_financial_record'),   
     
     # Parents URL Path
     path('parent_home', ParentViews.parent_home, name="parent_home"),

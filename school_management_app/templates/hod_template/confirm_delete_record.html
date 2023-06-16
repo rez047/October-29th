@@ -1,0 +1,36 @@
+{% extends 'hod_template/base_template.html' %}
+
+{% block page_title %}
+<i class="nav-icon fas fa-file-invoice-dollar"></i> CONFIRM DELETE RECORD
+{% endblock page_title %}
+
+{% block main_content %}
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card card-danger">
+          <div class="card-header">
+            <h3 class="card-title">Confirm Delete Record</h3>
+          </div>
+          <div class="card-body">
+            <p>Are you sure you want to delete the following financial record?</p>
+            <p><strong>Student:</strong> {{ financial_record.student.first_name }} {{ financial_record.student.last_name }}</p>
+            <p><strong>Date:</strong> {{ financial_record.date }}</p>
+            <p><strong>Fee Type:</strong> {{ financial_record.fee_type }}</p>
+            <p><strong>Amount Paid:</strong> {{ financial_record.amount_paid }}</p>
+          </div>
+          <div class="card-footer">
+            <form method="post" action="{% url 'delete_financial_record' financial_record.id %}">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-danger">Confirm Delete</button>
+              <a href="{% url 'financial_record_list' %}" class="btn btn-secondary">Cancel</a>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock main_content %}
+

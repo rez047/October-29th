@@ -8,7 +8,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = [
     'eldovalleybaptistacademy.onrender.com',
-    # Other allowed hosts...
+    '127.0.0.1',# Other allowed hosts...
 ]
 
 
@@ -119,5 +119,18 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 AUTH_USER_MODEL="school_management_app.CustomUser"
 AUTHENTICATION_BACKENDS=['school_management_app.EmailBackEnd.EmailBackEnd']
 
-EMAIL_BACKEND="django.core.mail.backends.filebased.EmailBackend"
 EMAIL_FILE_PATH=os.path.join(BASE_DIR,"sent_mails")
+# settings.py
+
+# Set the email backend
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+
+# Email server settings for Yahoo Mail
+EMAIL_HOST = 'smtp.mail.yahoo.com'
+EMAIL_PORT = 465
+EMAIL_HOST_USER = 'ezrasimiyu777@yahoo.com'  # Your Google email address
+EMAIL_HOST_PASSWORD = 'Jesuslives@7'  # Your Google email password
+EMAIL_USE_SSL = True  # Use SSL encryption
+
+# Other email settings...
+

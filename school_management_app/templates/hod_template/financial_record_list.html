@@ -49,6 +49,9 @@
                       <a href="{% url 'generate_receipt_pdfs' record.student.id %}">
                         Generate All 
                       </a>
+                      <a href="{% url 'delete_financial_record' record.id %}">
+                        Delete
+                      </a>  <!-- Added the Delete button -->
                     </td>
                   </tr>
                   {% endfor %}

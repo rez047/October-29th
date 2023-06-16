@@ -13,6 +13,7 @@ from django.core.files.storage import FileSystemStorage
 from django.contrib.auth.models import User
 from django.template.loader import get_template
 from django.shortcuts import render, redirect, get_object_or_404, reverse
+from django.utils import timezone
 from django.views import View
 from django.db.models import Sum
 from decimal import Decimal
@@ -21,6 +22,7 @@ import datetime
 import io
 from xhtml2pdf import pisa
 from django.template import Context
+from django.db import transaction
 
 from school_management_app.forms import  InvoiceForm,LineItemFormset
 from school_management_app.models import LeaveReportAccount, Accounts, FeedBackAccounts, CustomUser, NotificationAccounts, ANews, AComment, Invoice, LineItem, FinancialRecord, Students, DefaultSettings
@@ -270,7 +272,7 @@ def account_add_financial_record(request):
                     'tuition, lunch and transport': default_settings.tuition_lunch_transport_fee,
                     'other': default_settings.other_fee,
                 }
-                default_date = default_settings.default_date.strftime('%Y-%m-%d')
+                default_time = default_settings.default_time.strftime('%Y-%m-%d')
             except DefaultSettings.DoesNotExist:
                 default_fees = {
                     'lunch': 1000,
@@ -282,7 +284,7 @@ def account_add_financial_record(request):
                     'tuition, lunch and transport': 0,
                     'other': 0,
                 }
-                default_date = "2023-06-24"  # Set the default date as per your requirement
+                default_time = "2023-06-16 15:46:00"  # Set the default date as per your requirement
 
             # Add the default fee for the selected fee type and the latest new_balance
             fee_balance = default_fees.get(fee_type, 0) + latest_new_balance
@@ -339,6 +341,53 @@ def account_add_financial_record(request):
     else:
         try:
             default_settings = DefaultSettings.objects.first()
+            if default_settings is not None:
+                default_fees = {
+                    'lunch': default_settings.lunch_fee,
+                    'transport': default_settings.transport_fee,
+                    'tuition': default_settings.tuition_fee,
+                    'transport and lunch': default_settings.transport_and_lunch_fee,
+                    'tuition and transport': default_settings.tuition_and_transport_fee,
+                    'tuition and lunch': default_settings.tuition_and_lunch_fee,
+                    'tuition, lunch and transport': default_settings.tuition_lunch_transport_fee,
+                    'other': default_settings.other_fee,
+                }
+                default_time = default_settings.default_time.strftime('%Y-%m-%d')
+            else:
+                # Create new default settings with default values
+                default_settings = DefaultSettings.objects.create(
+                    lunch_fee=1000,
+                    transport_fee=2000,
+                    tuition_fee=100000,
+                    transport_and_lunch_fee=0,
+                    tuition_and_transport_fee=0,
+                    tuition_and_lunch_fee=0,
+                    tuition_lunch_transport_fee=0,
+                    other_fee=0
+                )
+                default_fees = {
+                    'lunch': default_settings.lunch_fee,
+                    'transport': default_settings.transport_fee,
+                    'tuition': default_settings.tuition_fee,
+                    'transport and lunch': default_settings.transport_and_lunch_fee,
+                    'tuition and transport': default_settings.tuition_and_transport_fee,
+                    'tuition and lunch': default_settings.tuition_and_lunch_fee,
+                    'tuition, lunch and transport': default_settings.tuition_lunch_transport_fee,
+                    'other': default_settings.other_fee,
+                }
+                default_time = default_settings.default_time.strftime('%Y-%m-%d')
+        except DefaultSettings.DoesNotExist:
+            # Create new default settings with default values
+            default_settings = DefaultSettings.objects.create(
+                lunch_fee=1000,
+                transport_fee=2000,
+                tuition_fee=100000,
+                transport_and_lunch_fee=0,
+                tuition_and_transport_fee=0,
+                tuition_and_lunch_fee=0,
+                tuition_lunch_transport_fee=0,
+                other_fee=0
+            )
             default_fees = {
                 'lunch': default_settings.lunch_fee,
                 'transport': default_settings.transport_fee,
@@ -349,23 +398,9 @@ def account_add_financial_record(request):
                 'tuition, lunch and transport': default_settings.tuition_lunch_transport_fee,
                 'other': default_settings.other_fee,
             }
-            default_date = default_settings.default_date.strftime('%Y-%m-%d')
-        except DefaultSettings.DoesNotExist:
-            default_fees = {
-                'lunch': 1000,
-                'transport': 2000,
-                'tuition': 100000,
-                'transport and lunch': 0,
-                'tuition and transport': 0,
-                'tuition and lunch': 0,
-                'tuition, lunch and transport': 0,
-                'other': 0,
-            }
-            default_date = "2023-06-24"  # Set the default date as per your requirement
+            default_time = default_settings.default_time.strftime('%Y-%m-%d')# Set the default date as per your requirement
     
-        return render(request, "account_template/financial_record_add.html", {"students": students, "default_fees": default_fees, "default_date": default_date})
-
-
+        return render(request, "account_template/financial_record_add.html", {"students": students, "default_fees": default_fees, "default_time": default_time})
 
 def account_default_settings(request):
     # Retrieve the existing default settings if they exist
@@ -376,44 +411,89 @@ def account_default_settings(request):
     
     # Render the default settings form template with the default settings data
     return render(request, 'account_template/default_settings.html', {'default_settings': default_settings})
+
+
 def account_save_default_settings(request):
     if request.method == 'POST':
         # Retrieve the form data
         lunch = request.POST.get('lunch')
         transport = request.POST.get('transport')
         tuition = request.POST.get('tuition')
-        default_date = request.POST.get('default_date')
-        
+        default_time = timezone.localtime(timezone.now()).date()  # Set the default_time to the current local date
+
         # Save the default settings to the database
         try:
-            default_settings = DefaultSettings.objects.first()
-            if default_settings:
-                # Update existing default settings
-                default_settings.lunch_fee = lunch
-                default_settings.transport_fee = transport
-                default_settings.tuition_fee = tuition
-                default_settings.default_date = default_date
-                default_settings.save()
-            else:
-                # Create new default settings
-                default_settings = DefaultSettings.objects.create(
-                    lunch_fee=lunch,
-                    transport_fee=transport,
-                    tuition_fee=tuition,
-                    default_date=default_date
-                )
+            with transaction.atomic():
+                default_settings = DefaultSettings.objects.first()
+                if default_settings:
+                    # Update existing default settings
+                    default_settings.lunch_fee = lunch
+                    default_settings.transport_fee = transport
+                    default_settings.tuition_fee = tuition
+                    default_settings.default_time = default_time  # Update the default_time field
+                    default_settings.save()
+                else:
+                    # Create new default settings
+                    default_settings = DefaultSettings.objects.create(
+                        lunch_fee=lunch,
+                        transport_fee=transport,
+                        tuition_fee=tuition,
+                        default_time=default_time  # Add the default_time field
+                    )
+
+                # Create financial records for all students
+                students = Students.objects.all()
+                for student in students:
+                    # Get the latest financial record for the student
+                    try:
+                        latest_record = FinancialRecord.objects.filter(student=student).latest('created_at')
+                        new_balance = latest_record.new_balance - 0
+                    except FinancialRecord.DoesNotExist:
+                        # Create a new record if no previous record exists for the student
+                        new_balance = 0
+
+                    FinancialRecord.objects.create(
+                        student=student,
+                        date=default_time,  # Use default_time as the date for financial records
+                        fee_type='tuition',  # Set the fee_type to a default value or adjust as needed
+                        amount_paid=0,  # Set the amount_paid to a default value or adjust as needed
+                        fee_balance=new_balance or 0,  # Set fee_balance to new_balance if it exists, otherwise 0
+                        new_balance=new_balance  # Set the new_balance to a default value or adjust as needed
+                    )
+
         except Exception as e:
             # Handle any exceptions that may occur during saving
             error_message = "Failed to save default settings. Error: {}".format(str(e))
             return HttpResponse(error_message)
-        
+
         # Redirect to the default settings form with a success message
         messages.success(request, "Successfully saved Fee Structure")
         return redirect('account_add_financial_record')
-    
+
     # If the request is not a POST, redirect to the default settings form
     return redirect('account_default_settings')
 
+
+def account_delete_financial_record(request, record_id):
+    # Retrieve the financial record object
+    financial_record = get_object_or_404(FinancialRecord, id=record_id)
+
+    if request.method == 'POST':
+        # Delete the financial record
+        financial_record.delete()
+        messages.success(request, "Financial record deleted successfully")
+        return redirect('account_financial_record_list')
+
+    # If the request is not a POST, render the confirmation template
+    return render(request, "account_template/confirm_delete_record.html", {"financial_record": financial_record})
+    
+def account_confirm_delete_record(request, record_id):
+    try:
+        record = FinancialRecord.objects.get(id=record_id)
+        return render(request, 'account_template/confirm_delete_record.html', {'record': record})
+    except FinancialRecord.DoesNotExist:
+        messages.error(request, 'Financial record not found.')
+        return redirect('account_financial_record_list')
 
 
 def account_financial_record_list(request):
