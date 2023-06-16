@@ -1,11 +1,12 @@
 {% load static %}
 {% load humanize %}
+
 <!DOCTYPE html>
 <html>
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>School Management System |  Student Panel</title>
+  <title>School Management System | Student Panel</title>
   <link rel="shortcut icon" type="image/jpg" href="{% static "dist/img/home-icon.png" %}"/>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <!-- Font Awesome -->
@@ -160,29 +161,29 @@
         </div>
       </li>
       <!-- Notifications end -->
-<!-- User -->
-<li class="nav-item d-flex">
-  <a class="nav-link title-c2" style="white-space: nowrap; cursor: pointer;" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-    <span class="hidden">Welcome, </span>{{ user.last_name }}
-    <i class="fas fa-angle-down"></i>
-  </a>
-  <div class="btn-group">
-    <div class="dropdown-menu dropdown-menu-right">
-      <a class="dropdown-item" href="{% url 'student_profile' %}"><i class="fas fa-user"></i> Profile</a>
-      <div class="dropdown-divider"></div>
-      <a class="dropdown-item" href="{% url 'logout' %}" style="color: #ce0000;"><i class="fas fa-sign-out-alt"></i> Logout </a>
-    </div>
-  </div>
-</li>
-<!-- User end -->
+      <!-- User -->
+      <li class="nav-item d-flex">
+        <a class="nav-link title-c2" style="white-space: nowrap; cursor: pointer;" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <span class="hidden">Welcome, </span>{{ user.last_name }}
+          <i class="fas fa-angle-down"></i>
+        </a>
+        <div class="btn-group">
+          <div class="dropdown-menu dropdown-menu-right">
+            <a class="dropdown-item" href="{% url 'student_profile' %}"><i class="fas fa-user"></i> Profile</a>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item" href="{% url 'logout' %}" style="color: #ce0000;"><i class="fas fa-sign-out-alt"></i> Logout </a>
+          </div>
+        </div>
+      </li>
+      <!-- User end -->
     </ul>
   </nav>
 
   <!-- Main Sidebar Container -->
-    {% include 'student_template/sidebar_template.html' with user=user id=id %}
+  {% include 'student_template/sidebar_template.html' with user=user id=id %}
 
   <!-- Content Wrapper. Contains page content -->
-   <div class="content-wrapper">
+  <div class="content-wrapper">
     <div class="content-header">
       <div class="container-fluid">
         <div id="lb-back">
@@ -191,8 +192,8 @@
         <div class="row mb-2">
           <div class="col-sm-6">
             <h1 class="m-0">
-                {% block page_title %}
-                {% endblock page_title %}
+              {% block page_title %}
+              {% endblock page_title %}
             </h1>
           </div>
           <div class="col-sm-6">
@@ -203,9 +204,9 @@
         </div>
       </div>
     </div>
-     {% block main_content %}{% endblock main_content %}
+    {% block main_content %}{% endblock main_content %}
   </div>
-    {% include 'student_template/footer.html' %}
+  {% include 'student_template/footer.html' %}
 
 </div>
 <!-- jQuery -->
