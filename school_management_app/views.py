@@ -37,17 +37,14 @@ def doLogin(request):
         password = request.POST.get("password")
         user = None
 
-        # Check if the email contains "@" symbol
+        backend = EmailBackEnd()
         if "@" in email:
-            backend = EmailBackEnd()
             username = backend.get_username(email)
-            if username:
-                user = backend.authenticate(request, username=username, password=password)
         else:
-            backend = EmailBackEnd()
             username = backend.get_username(username)
-            if username:
-                user = backend.authenticate(request, username=username, password=password)
+
+        if username:
+            user = backend.authenticate(request, username=username, password=password)
 
         if user is not None:
             login(request, user)
@@ -60,6 +57,7 @@ def doLogin(request):
         else:
             messages.error(request, "Invalid Login Details")
             return HttpResponseRedirect("/")
+
 
 
             
