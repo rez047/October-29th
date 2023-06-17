@@ -27,23 +27,24 @@ def ShowLoginPage(request):
 
 
 
-def doLogin(request):
+def do_login(request):
     if request.method != "POST":
         return HttpResponse("<h2>Method Not Allowed</h2>")
     else:
         username = request.POST.get("username")
         password = request.POST.get("password")
 
-        # Check if the username contains '@' to determine if it is an email or username
-        if '@' in username:
-            user = EmailBackEnd.authenticate(request, username=username, password=password)
+        if "@" in username:
+            user = EmailBackEnd.authenticate(
+                request, username=username, password=password
+            )
         else:
             user = authenticate(request, username=username, password=password)
 
         if user is not None:
             login(request, user)
             if user.user_type == "1":
-                return HttpResponseRedirect('/admin_home')
+                return HttpResponseRedirect("/admin_home")
             elif user.user_type == "2":
                 return HttpResponseRedirect(reverse("staff_home"))
             else:
@@ -51,6 +52,7 @@ def doLogin(request):
         else:
             messages.error(request, "Invalid Login Details")
             return HttpResponseRedirect("/")
+
 
 
 
