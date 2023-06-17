@@ -4,12 +4,13 @@ from django.contrib.auth.backends import ModelBackend
 class EmailBackEnd(ModelBackend):
     def authenticate(self, request, username=None, password=None, **kwargs):
         UserModel = get_user_model()
+
+        # Check if the username is an email
         try:
-            # Check if the username is an email
             user = UserModel.objects.get(email=username)
         except UserModel.DoesNotExist:
+            # Check if the username is a username
             try:
-                # Check if the username is a username
                 user = UserModel.objects.get(username=username)
             except UserModel.DoesNotExist:
                 return None
@@ -19,10 +20,3 @@ class EmailBackEnd(ModelBackend):
 
         return None
 
-    def get_username(self, email):
-        UserModel = get_user_model()
-        try:
-            user = UserModel.objects.get(email=email)
-            return user.username
-        except UserModel.DoesNotExist:
-            return None
