@@ -43,15 +43,17 @@ def doLogin(request):
         #     messages.error(request,"Invalid Captcha Try Again")
         #     return HttpResponseRedirect("/")
 
-        username = request.POST.get("username")
+        email = request.POST.get("email")
         password = request.POST.get("password")
         user = None
 
-        # Check if the username contains "@" symbol
-        if "@" in username:
-            user = EmailBackEnd().authenticate(username=username, password=password, request=request)
+        # Check if the email contains "@" symbol
+        if "@" in email:
+            username = EmailBackEnd().get_username(email)
+            if username:
+                user = EmailBackEnd().authenticate(request, username=username, password=password)
         else:
-            user = authenticate(request, username=username, password=password)
+            user = authenticate(request, username=email, password=password)
 
         if user is not None:
             login(request, user)
