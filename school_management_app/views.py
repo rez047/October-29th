@@ -27,7 +27,7 @@ def ShowLoginPage(request):
 
 
 
-def do_login(request):
+def doLogin(request):
     if request.method != "POST":
         return HttpResponse("<h2>Method Not Allowed</h2>")
     else:
