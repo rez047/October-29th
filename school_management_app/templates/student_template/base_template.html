@@ -1,11 +1,11 @@
 {% load static %}
-
+{% load humanize %}
 <!DOCTYPE html>
 <html>
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>School Management System | Student Panel</title>
+  <title>School Management System |  Student Panel</title>
   <link rel="shortcut icon" type="image/jpg" href="{% static "dist/img/home-icon.png" %}"/>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <!-- Font Awesome -->
@@ -29,7 +29,7 @@
   <!-- Google Font: Source Sans Pro -->
   <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
   <link rel="stylesheet" href="{% static "custom/css/style.css" %}">
-  {% block custom_css %}{% endblock custom_css %}
+  {% block custom_css %}  {% endblock custom_css %}
   <style>
     .title-c1 {
       font-size: 20px;
@@ -153,142 +153,65 @@
             {% else %}
             You have received {{notifications.count}} notifications.
             {% endif %}
+            <!-- <span class="float-right text-muted text-sm">{{a.created_at | naturaltime}}</span> -->
           </a>
           <div class="dropdown-divider"></div>
           <a href="/student_all_notification" class="dropdown-item dropdown-footer">To view all notification</a>
         </div>
       </li>
       <!-- Notifications end -->
-      <!-- User -->
-      <li class="nav-item d-flex">
-        <a class="nav-link title-c2" style="white-space: nowrap; cursor: pointer;" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          <span class="hidden">Welcome, </span>{{ user.last_name }}
-          <i class="fas fa-angle-down"></i>
-        </a>
-        <div class="btn-group">
-          <div class="dropdown-menu dropdown-menu-right">
-            <a class="dropdown-item" href="{% url 'student_profile' %}"><i class="fas fa-user"></i> Profile</a>
-            <div class="dropdown-divider"></div>
-            <a class="dropdown-item" href="{% url 'logout' %}" style="color: #ce0000;"><i class="fas fa-sign-out-alt"></i> Logout </a>
-          </div>
-        </div>
-      </li>
-      <!-- User end -->
+<!-- User -->
+<li class="nav-item d-flex">
+  <a class="nav-link title-c2" style="white-space: nowrap; cursor: pointer;" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    <span class="hidden">Welcome, </span>{{ user.last_name }}
+    <i class="fas fa-angle-down"></i>
+  </a>
+  <div class="btn-group">
+    <div class="dropdown-menu dropdown-menu-right">
+      <a class="dropdown-item" href="{% url 'student_profile' %}"><i class="fas fa-user"></i> Profile</a>
+      <div class="dropdown-divider"></div>
+      <a class="dropdown-item" href="{% url 'logout' %}" style="color: #ce0000;"><i class="fas fa-sign-out-alt"></i> Logout </a>
+    </div>
+  </div>
+</li>
+<!-- User end -->
     </ul>
   </nav>
-  <!-- /.navbar -->
+
   <!-- Main Sidebar Container -->
-  <aside class="main-sidebar sidebar-dark-primary elevation-4">
-    <!-- Brand Logo -->
-    <a href="/student_dashboard" class="brand-link">
-      <span class="brand-text font-weight-light">Student</span>
-    </a>
-    <!-- Sidebar -->
-    <div class="sidebar">
-      <!-- Sidebar Menu -->
-      <nav class="mt-2">
-        <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-          <li class="nav-item">
-            <a href="/student_dashboard" class="nav-link {% if request.path == '/student_dashboard' %}active{% endif %}">
-              <i class="nav-icon fas fa-tachometer-alt"></i>
-              <p>
-                Dashboard
-              </p>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a href="/student_courses" class="nav-link {% if request.path == '/student_courses' %}active{% endif %}">
-              <i class="nav-icon fas fa-book"></i>
-              <p>
-                My Courses
-              </p>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a href="/student_grades" class="nav-link {% if request.path == '/student_grades' %}active{% endif %}">
-              <i class="nav-icon fas fa-graduation-cap"></i>
-              <p>
-                Grades
-              </p>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a href="/student_discussions" class="nav-link {% if request.path == '/student_discussions' %}active{% endif %}">
-              <i class="nav-icon fas fa-comments"></i>
-              <p>
-                Discussions
-              </p>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a href="/student_assignments" class="nav-link {% if request.path == '/student_assignments' %}active{% endif %}">
-              <i class="nav-icon fas fa-file-alt"></i>
-              <p>
-                Assignments
-              </p>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a href="/student_notifications" class="nav-link {% if request.path == '/student_notifications' %}active{% endif %}">
-              <i class="nav-icon fas fa-bell"></i>
-              <p>
-                Notifications
-              </p>
-            </a>
-          </li>
-        </ul>
-      </nav>
-      <!-- /.sidebar-menu -->
-    </div>
-    <!-- /.sidebar -->
-  </aside>
+    {% include 'student_template/sidebar_template.html' with user=user id=id %}
+
   <!-- Content Wrapper. Contains page content -->
-  <div class="content-wrapper">
-    <!-- Content Header (Page header) -->
+   <div class="content-wrapper">
     <div class="content-header">
       <div class="container-fluid">
+        <div id="lb-back">
+          <div id="lb-img"></div>
+        </div>
         <div class="row mb-2">
           <div class="col-sm-6">
-            <h1 class="m-0 text-dark">{% block page_title %}{% endblock page_title %}</h1>
-          </div><!-- /.col -->
+            <h1 class="m-0">
+                {% block page_title %}
+                {% endblock page_title %}
+            </h1>
+          </div>
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
-              <li class="breadcrumb-item"><a href="/student_dashboard">Home</a></li>
-              {% block breadcrumb %}
-              {% endblock breadcrumb %}
+              <li class="breadcrumb-item"><a class="btn btn-primary shadow-custom font-weight-bold" href="{% url 'student_home' %}"><i class="nav-icon fas fa-tachometer-alt mr-2"></i>НOME</a></li>
             </ol>
-          </div><!-- /.col -->
-        </div><!-- /.row -->
-      </div><!-- /.container-fluid -->
+          </div>
+        </div>
+      </div>
     </div>
-    <!-- /.content-header -->
-    <!-- Main content -->
-    <section class="content">
-      <div class="container-fluid">
-        {% block content %}
-        {% endblock content %}
-      </div><!-- /.container-fluid -->
-    </section>
-    <!-- /.content -->
+     {% block main_content %}{% endblock main_content %}
   </div>
-  <!-- /.content-wrapper -->
-  <footer class="main-footer">
-    <div class="float-right d-none d-sm-block">
-      <b>Version</b> 1.0.0
-    </div>
-    <strong>&copy; 2023 School Management System.</strong> All rights reserved.
-  </footer>
-  <!-- Control Sidebar -->
-  <aside class="control-sidebar control-sidebar-dark">
-    <!-- Control sidebar content goes here -->
-  </aside>
-  <!-- /.control-sidebar -->
+    {% include 'student_template/footer.html' %}
+
 </div>
-<!-- ./wrapper -->
 <!-- jQuery -->
 <script src="{% static "plugins/jquery/jquery.min.js" %}"></script>
 <!-- jQuery UI 1.11.4 -->
-<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+<script src="{% static "plugins/jquery-ui/jquery-ui.min.js" %}"></script>
 <!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
 <script>
   $.widget.bridge('uibutton', $.ui.button)
@@ -315,11 +238,9 @@
 <script src="{% static "plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js" %}"></script>
 <!-- AdminLTE App -->
 <script src="{% static "dist/js/adminlte.js" %}"></script>
-<!-- AdminLTE dashboard demo (This is only for demo purposes) -->
-<script src="{% static "dist/js/pages/dashboard.js" %}"></script>
-<!-- AdminLTE for demo purposes -->
-<script src="{% static "dist/js/demo.js" %}"></script>
+
 {% block custom_js %}
 {% endblock custom_js %}
+
 </body>
 </html>
