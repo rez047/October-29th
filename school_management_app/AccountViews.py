@@ -416,9 +416,9 @@ def account_default_settings(request):
 def account_save_default_settings(request):
     if request.method == 'POST':
         # Retrieve the form data
-        lunch = request.POST.get('lunch')
-        transport = request.POST.get('transport')
-        tuition = request.POST.get('tuition')
+        lunch = Decimal(request.POST.get('lunch'))
+        transport = Decimal(request.POST.get('transport'))
+        tuition = Decimal(request.POST.get('tuition'))
         default_time = timezone.localtime(timezone.now()).date()  # Set the default_time to the current local date
 
         # Save the default settings to the database
