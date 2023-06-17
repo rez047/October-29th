@@ -29,7 +29,7 @@ def ShowLoginPage(request):
 
 
 def doLogin(request):
-    if request.method!="POST":
+    if request.method != "POST":
         return HttpResponse("<h2>Method Not Allowed</h2>")
     else:
         # captcha_token=request.POST.get("g-recaptcha-response")
@@ -43,18 +43,21 @@ def doLogin(request):
         #     messages.error(request,"Invalid Captcha Try Again")
         #     return HttpResponseRedirect("/")
 
-        user=EmailBackEnd.authenticate(request,username=request.POST.get("username"),password=request.POST.get("password"))
-        if user!=None:
-            login(request,user)
-            if user.user_type=="1":
+        backend = EmailBackEnd()
+        user = backend.authenticate(request, username=request.POST.get("username"), password=request.POST.get("password"))
+        
+        if user is not None:
+            login(request, user)
+            if user.user_type == "1":
                 return HttpResponseRedirect('/admin_home')
-            elif user.user_type=="2":
+            elif user.user_type == "2":
                 return HttpResponseRedirect(reverse("staff_home"))
             else:
                 return HttpResponseRedirect(reverse("student_home"))
         else:
-            messages.error(request,"Invalid Login Details")
+            messages.error(request, "Invalid Login Details")
             return HttpResponseRedirect("/")
+
 
 
 
