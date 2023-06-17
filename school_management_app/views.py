@@ -27,7 +27,7 @@ def ShowLoginPage(request):
 
 
 
-def login_view(request):
+def doLogin(request):
     if request.method == "POST":
         email_or_username = request.POST.get("email_or_username")
         password = request.POST.get("password")
