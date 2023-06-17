@@ -41,10 +41,7 @@ def doLogin(request):
         if "@" in email_or_username:
             user = backend.authenticate(request, username=email, password=password)
         else:
-            # Check if the input is a username
-            username = backend.get_username(email_or_username)
-            if username:
-                user = backend.authenticate(request, username=username, password=password)
+            user = backend.authenticate(request, username=username, password=password)
 
         if user is not None:
             login(request, user)
