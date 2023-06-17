@@ -27,7 +27,6 @@ def ShowLoginPage(request):
 
 
 
-
 def doLogin(request):
     if request.method != "POST":
         return HttpResponse("<h2>Method Not Allowed</h2>")
@@ -36,12 +35,13 @@ def doLogin(request):
         password = request.POST.get("password")
         user = None
 
+        backend = EmailBackEnd()
+
         # Check if the input is an email
         if "@" in email_or_username:
-            backend = EmailBackEnd()
             user = backend.authenticate(request, username=email_or_username, password=password)
         else:
-            backend = EmailBackEnd()
+            # Check if the input is a username
             username = backend.get_username(email_or_username)
             if username:
                 user = backend.authenticate(request, username=username, password=password)
@@ -57,6 +57,7 @@ def doLogin(request):
         else:
             messages.error(request, "Invalid Login Details")
             return HttpResponseRedirect("/")
+
 
 
 
