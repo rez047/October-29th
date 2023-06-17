@@ -447,9 +447,11 @@ def account_save_default_settings(request):
                     # Get the latest financial record for the student
                     try:
                         latest_record = FinancialRecord.objects.filter(student=student).latest('created_at')
-                        new_balance = latest_record.new_balance - default_settings.tuition_fee
+                        fee_balance = latest_record.new_balance + default_settings.tuition_fee
+                        new_balance =fee_balance-amount_paid
                     except FinancialRecord.DoesNotExist:
                         # Create a new record if no previous record exists for the student
+                        fee_balance= default_settings.tuition_fee
                         new_balance = default_settings.tuition_fee
 
                     FinancialRecord.objects.create(
@@ -457,7 +459,7 @@ def account_save_default_settings(request):
                         date=default_time,  # Use default_time as the date for financial records
                         fee_type='tuition',  # Set the fee_type to a default value or adjust as needed
                         amount_paid=0,  # Set the amount_paid to a default value or adjust as needed
-                        fee_balance=new_balance or 0,  # Set fee_balance to new_balance if it exists, otherwise 0
+                        fee_balance=fee_balance ,  # Set fee_balance to new_balance if it exists, otherwise 0
                         new_balance=new_balance  # Set the new_balance to a default value or adjust as needed
                     )
 
