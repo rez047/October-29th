@@ -32,20 +32,20 @@ def doLogin(request):
     if request.method != "POST":
         return HttpResponse("<h2>Method Not Allowed</h2>")
     else:
-        # captcha_token=request.POST.get("g-recaptcha-response")
-        # cap_url="https://www.google.com/recaptcha/api/siteverify"
-        # cap_secret="6LeWtqUZAAAAANlv3se4uw5WAg-p0X61CJjHPxKT"
-        # cap_data={"secret":cap_secret,"response":captcha_token}
-        # cap_server_response=requests.post(url=cap_url,data=cap_data)
-        # cap_json=json.loads(cap_server_response.text)
+        email_or_username = request.POST.get("username")
+        password = request.POST.get("password")
+        user = None
 
-        # if cap_json['success']==False:
-        #     messages.error(request,"Invalid Captcha Try Again")
-        #     return HttpResponseRedirect("/")
+        # Check if the input is an email
+        if "@" in email_or_username:
+            backend = EmailBackEnd()
+            user = backend.authenticate(request, username=email_or_username, password=password)
+        else:
+            backend = EmailBackEnd()
+            username = backend.get_username(email_or_username)
+            if username:
+                user = backend.authenticate(request, username=username, password=password)
 
-        backend = EmailBackEnd()
-        user = backend.authenticate(request, username=request.POST.get("username"), password=request.POST.get("password"))
-        
         if user is not None:
             login(request, user)
             if user.user_type == "1":
@@ -57,6 +57,7 @@ def doLogin(request):
         else:
             messages.error(request, "Invalid Login Details")
             return HttpResponseRedirect("/")
+
 
 
 
