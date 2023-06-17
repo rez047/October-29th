@@ -44,6 +44,7 @@ def doLogin(request):
         #     return HttpResponseRedirect("/")
 
         email = request.POST.get("email")
+        username = request.POST.get("username")
         password = request.POST.get("password")
         user = None
 
@@ -53,7 +54,11 @@ def doLogin(request):
             if username:
                 user = EmailBackEnd().authenticate(request, username=username, password=password)
         else:
-            user = authenticate(request, username=email, password=password)
+
+            username = EmailBackEnd().get_username(username)
+            if username:
+                user = EmailBackEnd().authenticate(request, username=username, password=password)
+            
 
         if user is not None:
             login(request, user)
