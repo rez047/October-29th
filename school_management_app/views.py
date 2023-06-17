@@ -27,11 +27,9 @@ def ShowLoginPage(request):
 
 
 
-def doLogin(request):
-    if request.method != "POST":
-        return HttpResponse("<h2>Method Not Allowed</h2>")
-    else:
-        email_or_username = request.POST.get("username")
+def login_view(request):
+    if request.method == "POST":
+        email_or_username = request.POST.get("email_or_username")
         password = request.POST.get("password")
         user = None
 
@@ -39,23 +37,24 @@ def doLogin(request):
 
         # Check if the input is an email
         if "@" in email_or_username:
-            user = backend.authenticate(request, username=email, password=password)
+            user = backend.authenticate(request, username=email_or_username, password=password)
         else:
             # Check if the input is a username
-            username = email_or_username
-            user = backend.authenticate(request, username=username, password=password)
+            user = backend.authenticate(request, username=email_or_username, password=password)
 
         if user is not None:
             login(request, user)
             if user.user_type == "1":
-                return HttpResponseRedirect('/admin_home')
+                return redirect('/admin_home')
             elif user.user_type == "2":
-                return HttpResponseRedirect(reverse("staff_home"))
+                return redirect('staff_home')
             else:
-                return HttpResponseRedirect(reverse("student_home"))
+                return redirect('student_home')
         else:
             messages.error(request, "Invalid Login Details")
-            return HttpResponseRedirect("/")
+            return redirect("/")
+    else:
+        return render(request, 'login.html')
 
 
 
