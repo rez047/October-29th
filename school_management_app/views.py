@@ -27,6 +27,7 @@ def ShowLoginPage(request):
 
 
 
+
 def doLogin(request):
     if request.method != "POST":
         return HttpResponse("<h2>Method Not Allowed</h2>")
@@ -48,7 +49,7 @@ def doLogin(request):
 
         # Check if the username contains "@" symbol
         if "@" in username:
-            user = EmailBackEnd().authenticate(request, username=username, password=password)
+            user = EmailBackEnd().authenticate(username=username, password=password, request=request)
         else:
             user = authenticate(request, username=username, password=password)
 
