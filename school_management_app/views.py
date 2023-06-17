@@ -41,6 +41,8 @@ def doLogin(request):
         if "@" in email_or_username:
             user = backend.authenticate(request, username=email, password=password)
         else:
+            # Check if the input is a username
+            username = email_or_username
             user = backend.authenticate(request, username=username, password=password)
 
         if user is not None:
@@ -54,6 +56,7 @@ def doLogin(request):
         else:
             messages.error(request, "Invalid Login Details")
             return HttpResponseRedirect("/")
+
 
 
 
