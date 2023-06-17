@@ -32,19 +32,17 @@ def doLogin(request):
     if request.method != "POST":
         return HttpResponse("<h2>Method Not Allowed</h2>")
     else:
-        email = request.POST.get("email")
-        username = request.POST.get("username")
+        email_or_username = request.POST.get("email_or_username")
         password = request.POST.get("password")
         user = None
 
         backend = EmailBackEnd()
-        if "@" in email:
-            username = backend.get_username(email)
+        if "@" in email_or_username:
+            username = backend.get_username(email_or_username)
+            if username:
+                user = backend.authenticate(request, username=username, password=password)
         else:
-            username = backend.get_username(username)
-
-        if username:
-            user = backend.authenticate(request, username=username, password=password)
+            user = backend.authenticate(request, username=email_or_username, password=password)
 
         if user is not None:
             login(request, user)
@@ -57,6 +55,7 @@ def doLogin(request):
         else:
             messages.error(request, "Invalid Login Details")
             return HttpResponseRedirect("/")
+
 
 
 
