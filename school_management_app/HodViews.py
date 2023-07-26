@@ -1895,7 +1895,7 @@ def add_financial_record(request):
         student_obj = Students.objects.get(admin=student_admin_id)
         student = Students.objects.get(admin=student_user)
         course_id = request.POST.get("course")
-        course_obj = Subjects.objects.get(id=course_id)
+        course_obj = Courses.objects.get(id=course_id)
         date = request.POST.get("date")
         fee_type = request.POST.get("fee_type")
         session_year_id = request.POST.get("session_year")
