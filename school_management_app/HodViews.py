@@ -14,15 +14,17 @@ from django.views import View
 from django.db.models import Sum
 from django.template.loader import render_to_string
 from django.conf import settings
+from datetime import datetime
 from decimal import Decimal
 from django.core.exceptions import ObjectDoesNotExist
+from django.contrib.auth.decorators import login_required
 import pdfkit
-import datetime
 import io
 from django.template.loader import get_template
 from xhtml2pdf import pisa
 from django.template import Context
 from django.db import transaction
+from django.db.models import F
     
 
 
@@ -1841,66 +1843,149 @@ def generate_PDF(request, id):
     return response
 
 
+
+
+
+
+
+
+def delete_financial_record(request, record_id):
+    # Retrieve the financial record object
+    financial_record = get_object_or_404(FinancialRecord, id=record_id)
+
+    if request.method == 'POST':
+        # Delete the financial record
+        financial_record.delete()
+        messages.success(request, "Financial record deleted successfully")
+        return redirect('financial_record_list')
+
+    # If the request is not a POST, render the confirmation template
+    return render(request, "hod_template/confirm_delete_record.html", {"financial_record": financial_record})
+    
+def confirm_delete_record(request, record_id):
+    try:
+        record = FinancialRecord.objects.get(id=record_id)
+        return render(request, 'hod_template/confirm_delete_record.html', {'record': record})
+    except FinancialRecord.DoesNotExist:
+        messages.error(request, 'Financial record not found.')
+        return redirect('financial_record_list')
+
+
+def default_settings(request):
+    # Retrieve the existing default settings if they exist
+    try:
+        default_settings = DefaultSettings.objects.first()
+    except DefaultSettings.DoesNotExist:
+        default_settings = None
+    
+    # Render the default settings form template with the default settings data
+    return render(request, 'hod_template/default_settings.html', {'default_settings': default_settings})
+
+
 def add_financial_record(request):
     user = CustomUser.objects.get(id=request.user.id)
     records = FinancialRecord.objects.all()
-    students = CustomUser.objects.filter(user_type=3)
+    session_years=SessionYearModel.object.all()
+    courses = Courses.objects.all()
+    
 
     if request.method == "POST":
-        student_id = request.POST.get("student_id")
+        student_admin_id= request.POST.get("student_list")
+        student_user = CustomUser.objects.get(id=student_admin_id)
+        student_obj = Students.objects.get(admin=student_admin_id)
+        student = Students.objects.get(admin=student_user)
+        course_id = request.POST.get("course")
+        course_obj = Subjects.objects.get(id=course_id)
         date = request.POST.get("date")
         fee_type = request.POST.get("fee_type")
-        amount_paid = Decimal(request.POST.get("amount_paid"))  # Convert to Decimal
+        session_year_id = request.POST.get("session_year")
+
+
+
+        # Validate the date format before creating the record
+        if date:
+            try:
+                # Date format expected: "YYYY-MM-DD"
+                date_obj = datetime.strptime(date, "%Y-%m-%d")
+            except ValueError:
+                error_message = "Failed to add financial record. Invalid date format."
+                return HttpResponse(error_message)
+        else:
+            # Handle the case when the date is not provided
+            error_message = "Failed to add financial record. Date not provided."
+            return HttpResponse(error_message)
+
+
+        # Get the value of "amount_paid" from the request.POST dictionary
+        amount_paid_str = request.POST.get("amount_paid")
+
+        # Check if the value is not empty or None before converting to Decimal
+        if amount_paid_str:
+            amount_paid = Decimal(amount_paid_str)
+        else:
+            amount_paid = Decimal("0.00")  # Default value if amount_paid is empty
 
         try:
-            student_user = CustomUser.objects.get(id=student_id)
+            student_user = CustomUser.objects.get(id=student_admin_id)
+            student_obj = Students.objects.get(admin=student_user)
             student = Students.objects.get(admin=student_user)
+            course = Courses.objects.get(id=course_id)
+            session_year=SessionYearModel.object.get(id=session_year_id)
 
-            # Retrieve the latest financial record for the student, regardless of the fee type
-            latest_record = FinancialRecord.objects.filter(student=student).latest('created_at')
-            fee_balance = latest_record.new_balance
+            # Retrieve the latest financial record for the student with the same fee_type (if exists)
+            try:
+                latest_record_same_fee = FinancialRecord.objects.filter(student=student, fee_type=fee_type).latest('created_at')
+                latest_recor = FinancialRecord.objects.filter(student=student).latest('created_at')
+                fee_balance = latest_recor.new_balance
+            except FinancialRecord.DoesNotExist:
+                # If no previous record exists for the student with the same fee_type, set fee_balance to the default fee
+                default_settings = DefaultSettings.objects.first()
+                if default_settings is not None:
+                    default_fees = {
+                        'lunch': default_settings.lunch_fee,
+                        'transport': default_settings.transport_fee,
+                        'tuition': default_settings.tuition_fee,
+                        'transport and lunch': default_settings.transport_and_lunch_fee,
+                        'tuition and transport': default_settings.tuition_and_transport_fee,
+                        'tuition and lunch': default_settings.tuition_and_lunch_fee,
+                        'tuition, lunch and transport': default_settings.tuition_lunch_transport_fee,
+                        'other': default_settings.other_fee,
+                    }
+                    default_time = default_settings.default_time.strftime('%Y-%m-%d')
+                else:
+                    # Create new default settings with default values
+                    default_settings = DefaultSettings.objects.create(
+                        lunch_fee=1000,
+                        transport_fee=2000,
+                        tuition_fee=100000,
+                        transport_and_lunch_fee=0,
+                        tuition_and_transport_fee=0,
+                        tuition_and_lunch_fee=0,
+                        tuition_lunch_transport_fee=0,
+                        other_fee=0
+                    )
+                    default_fees = {
+                        'lunch': default_settings.lunch_fee,
+                        'transport': default_settings.transport_fee,
+                        'tuition': default_settings.tuition_fee,
+                        'transport and lunch': default_settings.transport_and_lunch_fee,
+                        'tuition and transport': default_settings.tuition_and_transport_fee,
+                        'tuition and lunch': default_settings.tuition_and_lunch_fee,
+                        'tuition, lunch and transport': default_settings.tuition_lunch_transport_fee,
+                        'other': default_settings.other_fee,
+                    }
+                    default_time = default_settings.default_time.strftime('%Y-%m-%d')
+
+                latest_record = FinancialRecord.objects.filter(student=student).latest('created_at')
+                fee_balance = default_fees.get(fee_type, 0)+latest_record.new_balance
 
             # Calculate the new balance by subtracting the amount paid from the fee_balance
-            new_balance = fee_balance - amount_paid
-
-            # Retrieve the latest new_balance regardless of the fee type
-            latest_new_balance = FinancialRecord.objects.filter(student=student).latest('created_at').new_balance
-
-            # Retrieve the default fees and date from the DefaultSettings model
-            try:
-                default_settings = DefaultSettings.objects.first()
-                default_fees = {
-                    'lunch': default_settings.lunch_fee,
-                    'transport': default_settings.transport_fee,
-                    'tuition': default_settings.tuition_fee,
-                    'transport and lunch': default_settings.transport_and_lunch_fee,
-                    'tuition and transport': default_settings.tuition_and_transport_fee,
-                    'tuition and lunch': default_settings.tuition_and_lunch_fee,
-                    'tuition, lunch and transport': default_settings.tuition_lunch_transport_fee,
-                    'other': default_settings.other_fee,
-                }
-                default_time = default_settings.default_time.strftime('%Y-%m-%d')
-            except DefaultSettings.DoesNotExist:
-                default_fees = {
-                    'lunch': 1000,
-                    'transport': 2000,
-                    'tuition': 100000,
-                    'transport and lunch': 0,
-                    'tuition and transport': 0,
-                    'tuition and lunch': 0,
-                    'tuition, lunch and transport': 0,
-                    'other': 0,
-                }
-                default_time = "2023-06-16 15:46:00"  # Set the default date as per your requirement
-
-            # Add the default fee for the selected fee type and the latest new_balance
-            fee_balance = default_fees.get(fee_type, 0) + latest_new_balance
             new_balance = fee_balance - amount_paid
 
             # Create the financial record
             record = FinancialRecord.objects.create(
                 student=student,
-                date=date,
+                date=date_obj,  # Use the parsed date_obj instead of the date string
                 fee_type=fee_type,
                 fee_balance=fee_balance,
                 amount_paid=amount_paid,
@@ -1910,37 +1995,8 @@ def add_financial_record(request):
             # Redirect or display a success message
             return HttpResponseRedirect(reverse("financial_record_list"))
         except Students.DoesNotExist:
-            error_message = "Failed to add financial record. Student with ID {} not found.".format(student_id)
+            error_message = "Failed to add financial record. Student with ID {} not found.".format(student_admin_id)
             return HttpResponse(error_message)
-        except FinancialRecord.DoesNotExist:
-            # If no previous record exists for the student, set fee_balance to the default fee for the selected fee type
-            default_fees = {
-                'lunch': 1000,
-                'transport': 2000,
-                'tuition': 100000,
-                'transport and lunch': 0,
-                'tuition and transport': 0,
-                'tuition and lunch': 0,
-                'tuition, lunch and transport': 0,
-                'other': 0,
-            }
-            fee_balance = default_fees.get(fee_type, 0)
-
-            # Calculate the new balance by subtracting the amount paid from the fee_balance
-            new_balance = fee_balance - amount_paid
-
-            # Create the financial record
-            record = FinancialRecord.objects.create(
-                student=student,
-                date=date,
-                fee_type=fee_type,
-                fee_balance=fee_balance,
-                amount_paid=amount_paid,
-                new_balance=new_balance
-            )
-
-            # Redirect or display a success message
-            return HttpResponseRedirect(reverse("financial_record_list"))
         except Exception as e:
             error_message = "Failed to add financial record. Error: {}".format(str(e))
             return HttpResponse(error_message)
@@ -1982,7 +2038,8 @@ def add_financial_record(request):
                     'tuition, lunch and transport': default_settings.tuition_lunch_transport_fee,
                     'other': default_settings.other_fee,
                 }
-                default_time = default_settings.default_time.strftime('%Y-%m-%d')
+                default_time = default_settings.default_time.strftime('%Y-%m-%d')  # Set the default date as per your requirement
+
         except DefaultSettings.DoesNotExist:
             # Create new default settings with default values
             default_settings = DefaultSettings.objects.create(
@@ -2005,45 +2062,9 @@ def add_financial_record(request):
                 'tuition, lunch and transport': default_settings.tuition_lunch_transport_fee,
                 'other': default_settings.other_fee,
             }
-            default_time = default_settings.default_time.strftime('%Y-%m-%d')# Set the default date as per your requirement
-    
-        return render(request, "hod_template/financial_record_add.html", {"students": students, "default_fees": default_fees, "default_time": default_time})
+            default_time = default_settings.default_time.strftime('%Y-%m-%d')  # Set the default date as per your requirement
 
-
-
-
-def delete_financial_record(request, record_id):
-    # Retrieve the financial record object
-    financial_record = get_object_or_404(FinancialRecord, id=record_id)
-
-    if request.method == 'POST':
-        # Delete the financial record
-        financial_record.delete()
-        messages.success(request, "Financial record deleted successfully")
-        return redirect('financial_record_list')
-
-    # If the request is not a POST, render the confirmation template
-    return render(request, "hod_template/confirm_delete_record.html", {"financial_record": financial_record})
-    
-def confirm_delete_record(request, record_id):
-    try:
-        record = FinancialRecord.objects.get(id=record_id)
-        return render(request, 'hod_template/confirm_delete_record.html', {'record': record})
-    except FinancialRecord.DoesNotExist:
-        messages.error(request, 'Financial record not found.')
-        return redirect('financial_record_list')
-
-
-def default_settings(request):
-    # Retrieve the existing default settings if they exist
-    try:
-        default_settings = DefaultSettings.objects.first()
-    except DefaultSettings.DoesNotExist:
-        default_settings = None
-    
-    # Render the default settings form template with the default settings data
-    return render(request, 'hod_template/default_settings.html', {'default_settings': default_settings})
-
+    return render(request, "hod_template/financial_record_add.html", { "session_years":session_years, "courses": courses, "default_fees": default_fees, "default_time": default_time})
 
 
 
@@ -2110,9 +2131,9 @@ def save_default_settings(request):
     return redirect('default_settings')
 
 
-
 def financial_record_list(request):
     financial_records = FinancialRecord.objects.all().select_related('student__admin')
+    courses = Courses.objects.filter()
 
     return render(request, "hod_template/financial_record_list.html", {"financial_records": financial_records})
     
@@ -2230,8 +2251,22 @@ def students_list(request):
     
     # Render the students list template with the students data
     return render(request, 'hod_template/students_list.html', {'students': students})
+    
 
+@csrf_exempt        
+def get_students_by_course(request, course_id):
+    course_id = request.POST.get("course")
+    session_year = request.POST.get("session_year")
 
+    course = Courses.objects.get(id=course_id)
+    session_model = SessionYearModel.object.get(id=session_year)
+    students = Students.objects.filter(course_id=course, session_year_id=session_model).order_by(F('admin__first_name'), F('admin__last_name'))
+    list_data = []
+
+    for student in students:
+        data_small = {"id": student.admin.id, "name": student.admin.first_name + " " + student.admin.last_name}
+        list_data.append(data_small)
+    return JsonResponse(json.dumps(list_data), content_type="application/json", safe=False)
 
 
 
