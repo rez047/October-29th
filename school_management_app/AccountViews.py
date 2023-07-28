@@ -328,8 +328,12 @@ def account_add_financial_record(request):
                     }
                     default_time = default_settings.default_time.strftime('%Y-%m-%d')
 
-                latest_record = FinancialRecord.objects.filter(student=student).latest('created_at')
-                fee_balance = default_fees.get(fee_type, 0)+latest_record.new_balance
+                if not FinancialRecord.objects.filter(student=student).exists():
+                    fee_balance = default_fees.get(fee_type, 0)
+                else:
+                
+                    latest_record = FinancialRecord.objects.filter(student=student).latest('created_at')
+                    fee_balance = default_fees.get(fee_type, 0)+latest_record.new_balance
 
             # Calculate the new balance by subtracting the amount paid from the fee_balance
             new_balance = fee_balance - amount_paid
