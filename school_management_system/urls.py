@@ -166,7 +166,7 @@ urlpatterns = [
     # URL for saving the default settings
     path('save-default-settings/', HodViews.save_default_settings, name='save_default_settings'),  
     path('update_session_year/', update_session_year, name='update_session_year'), 
-
+    path('get_students_by_course/<int:course_id>/', HodViews.get_students_by_course, name='get_students_by_course'),
     #Staff URL Path
     path('staff_home', StaffViews.staff_home, name="staff_home"),
     path('staff_take_attendance', StaffViews.staff_take_attendance, name="staff_take_attendance"),
