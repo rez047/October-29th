@@ -21,10 +21,10 @@
             <p><strong>Amount Paid:</strong> {{ financial_record.amount_paid }}</p>
           </div>
           <div class="card-footer">
-            <form method="post" action="{% url 'delete_financial_record' financial_record.id %}">
+            <form method="post" action="{% url 'account_delete_financial_record' financial_record.id %}">
               {% csrf_token %}
               <button type="submit" class="btn btn-danger">Confirm Delete</button>
-              <a href="{% url 'financial_record_list' %}" class="btn btn-secondary">Cancel</a>
+              <a href="{% url 'account_financial_record_list' %}" class="btn btn-secondary">Cancel</a>
             </form>
           </div>
         </div>
@@ -33,4 +33,3 @@
   </div>
 </section>
 {% endblock main_content %}
-
