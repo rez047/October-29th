@@ -252,6 +252,10 @@ def account_add_financial_record(request):
         fee_type = request.POST.get("fee_type")
         session_year_id = request.POST.get("session_year")
 
+        
+        if not (student_admin_id and course_id and date and fee_type and session_year_id and amount_paid_str):
+            error_message = "Failed to add financial record. Please fill in all the required fields."
+            return HttpResponse(error_message)
 
 
         # Validate the date format before creating the record
