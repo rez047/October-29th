@@ -425,15 +425,7 @@
               </p>
             </a>
             <ul class="nav nav-treeview">
-            <li class="nav-item">
-              <a href="{% url 'add_financial_record' %}"
-                class="nav-link {% if request.path == add_financial_record %} active {% endif %}">
-                <i class="nav-icon fas fa-plus"></i>
-                <p>
-                  Add Financial Record 
-                </p>
-              </a>
-            </li>
+
             <li class="nav-item">
               <a href="{% url 'financial_record_list' %}"
                 class="nav-link {% if request.path == financial_record_list %} active {% endif %}">
@@ -443,15 +435,7 @@
                 </p>
               </a>
             </li>
-            <li class="nav-item">
-              <a href="{% url 'default_settings' %}"
-                class="nav-link {% if request.path == default_settings %} active {% endif %}">
-                <i class="nav-icon fas fa-tasks"></i>
-                <p>
-                  Update Fee STRUCTURE
-                </p>
-              </a>
-            </li>
+
           </ul>
           </li>
           <li class="nav-item">
