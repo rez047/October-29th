@@ -9,7 +9,7 @@ DEBUG = True
 ALLOWED_HOSTS = [
     'eldovalleybaptistacademy.onrender.com',
     '127.0.0.1',
-    'ezzacademy.onrender.com/'# Other allowed hosts...
+    'ezzacademy.onrender.com'# Other allowed hosts...
 ]
 
 
