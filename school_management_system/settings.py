@@ -49,7 +49,7 @@ ROOT_URLCONF = 'school_management_system.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': ['school_management_app/templates'],
+        'DIRS': [os.path.join(BASE_DIR, 'school_management_app/templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
