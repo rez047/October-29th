@@ -134,3 +134,5 @@ EMAIL_USE_SSL = True  # Use SSL encryption
 
 # Other email settings...
 
+MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
+
