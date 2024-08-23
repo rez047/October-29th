@@ -46,6 +46,17 @@
     <div class="row justify-content-center">
       <div class="col-md-6 login-container">
         <h2>Login</h2>
+        
+        {% if messages %}
+          <div class="alert-container">
+            {% for message in messages %}
+              <div class="alert alert-{{ message.tags }}">
+                {{ message }}
+              </div>
+            {% endfor %}
+          </div>
+        {% endif %}
+        
         <form action="/doLogin" method="post">
           {% csrf_token %}
           <div class="form-group">
