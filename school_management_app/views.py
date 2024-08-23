@@ -52,9 +52,9 @@ def doLogin(request):
                 return redirect('student_home')
         else:
             messages.error(request, "Invalid Login Details")
-            return render(request, 'login.html')
+            return render(request, 'login_page.html')
     else:
-        return render(request, 'login.html')
+        return render(request, 'login_page.html')
 
 
 
