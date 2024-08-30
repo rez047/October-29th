@@ -8,8 +8,6 @@ six==1.14.0
 sqlparse==0.4.1
 pdfkit
 gunicorn
-reportlab==3.6.12
-xhtml2pdf==0.2.5
 
 
 
