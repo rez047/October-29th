@@ -10,6 +10,8 @@ pdfkit
 gunicorn
 reportlab==3.6.13
 xhtml2pdf==0.2.11
+requests>=2.31.0
+
 
 
 
