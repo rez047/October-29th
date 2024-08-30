@@ -8,9 +8,13 @@ six==1.14.0
 sqlparse==0.4.1
 pdfkit
 gunicorn
-reportlab==3.6.13
-xhtml2pdf==0.2.11
-requests>=2.31.0
+Django==3.2.1
+Pillow==9.5.0
+reportlab==3.6.12
+xhtml2pdf==0.2.6
+pyHanko==0.20.1
+requests==2.31.0
+
 
 
 
