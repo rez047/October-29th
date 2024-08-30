@@ -6,8 +6,8 @@ pytz==2021.1
 requests==2.22.0
 six==1.14.0
 sqlparse==0.4.1
-pdfkit==1.0.0
-gunicorn==23.0.0
+pdfkit
+gunicorn
 xhtml2pdf==0.2.11
 reportlab==3.6.13
 
