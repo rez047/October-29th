@@ -9,4 +9,3 @@ sqlparse==0.4.1
 pdfkit
 gunicorn
 xhtml2pdf
-pip==20.1.1
